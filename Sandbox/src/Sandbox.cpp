@@ -6,7 +6,12 @@ namespace Sandbox
 	GameObject* Object;
 	GameObject* Object2;
 	GameObject* Object3;
+
 	Texture* ObjectTexture;
+	AnimationTexture* ObjectAnimationTexture;
+
+	Animation* ObjectAnimation;
+	Animation* Object2Animation;
 
 	float rotation = 0.0f;
 	float movForward, movBackward, movLeft, movRight;
@@ -15,16 +20,29 @@ namespace Sandbox
 	void Game::OnStart(void) const
 	{
 		Object = new GameObject("Object");
-		Object2 = new GameObject("Object");
-		Object3 = new GameObject("Object");
+		Object2 = new GameObject("Object2");
+		Object3 = new GameObject("Object3");
+
 		ObjectTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\texture_pack\\player", "Object texture");
+		ObjectAnimationTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\animation_pack\\player_animation", "Object animation texture");
+
 		Object->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
 		Object2->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
 		Object3->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
 		Object3->GetComponent<Transform>().SetPosition(Vector2f(50.0f, 50.0f));
 
+		Animation::Constraints AnimationConstraints[] = {
+			ANIMATION_CONSTRAINTS,
+			{ 6, 0.20f },
+			{ 6, 0.20f },
+		};
+		ObjectAnimation = new Animation(*ObjectAnimationTexture, 3, AnimationConstraints);
+		Object2Animation = new Animation(*ObjectAnimation);
+
 		Object->AddComponent<CharacterController>();
 		Object->AssignComponent(Camera::GetCamera(MAIN_CAMERA));
+		Object->AssignComponent<Animation>(*ObjectAnimation);
+		Object2->AssignComponent<Animation>(*Object2Animation);
 
 		movForward = Input::GetAxisDirection(Input::Direction::Up);
 		movBackward = Input::GetAxisDirection(Input::Direction::Down);
@@ -56,6 +74,9 @@ namespace Sandbox
 				Object->AssignComponent(Camera::GetCamera(MAIN_CAMERA));
 			}
 		}
+
+		Object->GetComponent<Animation>().Animate(2);
+		Object2->GetComponent<Animation>().Animate(2);
 	}
 
 	// Function is called upon exit

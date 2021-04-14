@@ -15,6 +15,7 @@ namespace Strave
 	class GameObject;
 	class UserInterface;
 	class GameObjectContainer;
+	class Animation;
 	class Camera;
 
 	class Renderer final
@@ -27,6 +28,7 @@ namespace Strave
 		static sf::RenderWindow& GetSceneWindow(void);
 		static const GameObject* PullObjectFromContainer(Uint64 key);
 		static const UserInterface* PullUserInterfaceFromContainer(Uint64 key);
+		static const Animation* PullAnimationFromContainer(Uint64 key);
 		static Camera* PullCameraFromContainer(Uint64 key);
 
 	private:

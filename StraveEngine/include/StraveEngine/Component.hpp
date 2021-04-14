@@ -4,5 +4,6 @@
 #include <StraveEngine/Component/IComponent.hpp>
 #include <StraveEngine/Component/Transform.hpp>
 #include <StraveEngine/Component/CharacterController.hpp>
-#include <StraveEngine/Component/Camera.hpp>
+#include <StraveEngine/Component/Camera/Camera.hpp>
+#include <StraveEngine/Component/Animation/Animation.hpp>
 #include <StraveEngine/Component/ComponentDefinitions.hpp>

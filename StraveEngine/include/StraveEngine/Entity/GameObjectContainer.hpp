@@ -6,7 +6,7 @@
 
 namespace Strave
 {
-	struct Exceptions;
+	struct Exception;
 	class GameObject;
 
 	class GameObjectContainer final : public MapContainer<GameObject>

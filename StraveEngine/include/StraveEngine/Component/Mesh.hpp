@@ -58,6 +58,7 @@ namespace Strave
 		template<> inline RectangleSprite& GetSprite(void) const { return *static_cast<RectangleSprite*>(m_Sprite->GetInstance()); }
 		ISprite& GetSprite(void) const { return *m_Sprite; }
 		inline Texture& GetTexture(void) const { return *m_Texture; }
+		void UpdateTexture(const Texture& texture);
 		void SelectMesh(ISprite& sprite);
 		void ApplyTexture(Texture& texture);
 		void RemoveTexture(void);

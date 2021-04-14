@@ -1,6 +1,6 @@
 #include <StraveEngine/Scene/Scene.hpp>
 
-#include <StraveEngine/Component/Camera.hpp>
+#include <StraveEngine/Component/Camera/Camera.hpp>
 #include <StraveEngine/System/Exception.hpp>
 
 

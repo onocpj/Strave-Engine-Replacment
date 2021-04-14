@@ -69,6 +69,16 @@ namespace Strave
 		m_Texture(mesh.m_Texture)
 	{}
 
+	void Mesh::UpdateTexture(const Texture& texture)
+	{
+		switch (m_Type)
+		{
+			case MeshType::Sprite: this->GetSprite<Sprite>().setTexture(texture, true); break;
+			case MeshType::RectangleSprite: this->GetSprite<RectangleSprite>().setTexture(&texture, true); break;
+			default: break;
+		}
+	}
+
 	void Mesh::SelectMesh(ISprite& sprite)
 	{
 		m_Type = TransformMeshType(sprite);

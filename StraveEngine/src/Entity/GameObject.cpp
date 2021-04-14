@@ -1,4 +1,5 @@
 #include <StraveEngine/Entity/GameObject.hpp>
+
 #include <StraveEngine/System/ExceptionHandler.hpp>
 #include <StraveEngine/Entity/GameObjectContainer.hpp>
 

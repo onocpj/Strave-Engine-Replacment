@@ -5,7 +5,7 @@
 #include <StraveEngine/System/Exception.hpp>
 #include <StraveEngine/System/Window.hpp>
 #include <StraveEngine/System/Log.hpp>
-#include <StraveEngine/System/Math.hpp>
+#include <StraveEngine/System/Basics.hpp>
 #include <StraveEngine/Component/Mesh.hpp>
 #include <StraveEngine/Element/Sprite.hpp>
 #include <StraveEngine/Element/RectangleSprite.hpp>
@@ -14,8 +14,10 @@
 #include <StraveEngine/UI/UserInterface.hpp>
 #include <StraveEngine/UI/UserInterfaceContainer.hpp>
 #include <StraveEngine/System/MapContainer.cpp>
-#include <StraveEngine/Component/CameraContainer.hpp>
-#include <StraveEngine/Component/Camera.hpp>
+#include <StraveEngine/Component/Animation/Animation.hpp>
+#include <StraveEngine/Component/Animation/AnimationContainer.hpp>
+#include <StraveEngine/Component/Camera/CameraContainer.hpp>
+#include <StraveEngine/Component/Camera/Camera.hpp>
 
 
 namespace Strave
@@ -28,7 +30,7 @@ namespace Strave
 		UserInterfaceContainer
 	};
 
-	typedef struct SelectedContainer
+	struct SelectedContainer
 	{
 		ContainerType type;
 		Uint64 size;
@@ -70,7 +72,7 @@ namespace Strave
 			userInterfaceContainerSize
 		};
 
-		Uint64 largerContainerSize = Math::FindLargest(containerSizes, 2);
+		Uint64 largerContainerSize = Basics::FindLargest(containerSizes, 2);
 
 		for (Uint64 key = -1; key != largerContainerSize - 1; key++)
 		{
@@ -80,7 +82,10 @@ namespace Strave
 				objectToRender = Renderer::PullObjectFromContainer((Uint64)key);
 
 				if (objectToRender != UNDEF_PTR)
+				{
+					Animation::Update(*objectToRender);
 					Renderer::RenderMesh(objectToRender->GetComponent<Mesh>());
+				}
 			}
 			if (key != (userInterfaceContainerSize - 1))
 			{
@@ -137,6 +142,11 @@ namespace Strave
 	const UserInterface* Renderer::PullUserInterfaceFromContainer(Uint64 key)
 	{
 		return UserInterfaceContainer::s_UserInterfaceContainer->Next(key);
+	}
+
+	const Animation* Renderer::PullAnimationFromContainer(Uint64 key)
+	{
+		return AnimationContainer::s_AnimationContainer->Next(key);
 	}
 
 	Camera* Renderer::PullCameraFromContainer(Uint64 key)

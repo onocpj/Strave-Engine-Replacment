@@ -8,7 +8,8 @@
 #include <StraveEngine/Component/Transform.hpp>
 #include <StraveEngine/Component/Mesh.hpp>
 #include <StraveEngine/Component/CharacterController.hpp>
-#include <StraveEngine/Component/Camera.hpp>
+#include <StraveEngine/Component/Camera/Camera.hpp>
+#include <StraveEngine/Component/Animation/Animation.hpp>
 
 
 #define GO_KEY_UNASSIGNED	ERROR_TYPE
@@ -20,7 +21,6 @@ namespace Strave
 	class RigidBody;
 	class Collider;
 	class ParticleSystem;
-	class Animation;
 	class Audio;
 	class AIController;
 
@@ -32,14 +32,15 @@ namespace Strave
 		GameObject(const GameObject& object);
 		~GameObject() = default;
 
+		inline const Uint64& GetKey(void) const { return m_KEY; }
 		template<typename T> inline T& GetComponent(void) const;
 		template<> inline Transform& GetComponent<Transform>(void) const { return *m_Transform; }
 		template<> inline Mesh& GetComponent<Mesh>(void) const { return *m_Mesh; }
 		template<> inline Camera& GetComponent<Camera>(void) const { return *m_Camera; }
+		template<> inline Animation& GetComponent<Animation>(void) const { return *m_Animation; }
 		//template<> inline RigidBody& GetComponent<RigidBody>(void) const { return *m_RigidBody; }
 		//template<> inline Collider& GetComponent<Collider>(void) const { return *m_Collider; }
 		//template<> inline ParticleSystem& GetComponent<ParticleSystem>(void) const { return *m_ParticleSystem; }
-		//template<> inline Animation& GetComponent<Animation>(void) const { return *m_Animation; }
 		//template<> inline Audio& GetComponent<Audio>(void) const { return *m_Audio; }
 		template<> inline CharacterController& GetComponent<CharacterController>(void) const { return *m_CharacterController; }
 		//template<> inline AIController& GetComponent<AIController>(void) const { return *m_AIController; }
@@ -78,7 +79,6 @@ namespace Strave
 		//template<> inline void AddComponent<RigidBody>(RigidBody& component) { m_RigidBody = &component; }
 		//template<> inline void AddComponent<Collider>(Collider& component) { m_Collider = &component; }
 		//template<> inline void AddComponent<ParticleSystem>(ParticleSystem& component) { m_ParticleSystem = &component; }
-		//template<> inline void AddComponent<Animation>(Animation& component) { m_Animation = &component; }
 		//template<> inline void AddComponent<Audio>(Audio& component) { m_Audio = &component; }
 		template<> inline void AddComponent<CharacterController>(void) 
 		{ 
@@ -101,17 +101,37 @@ namespace Strave
 				return;
 			}
 			else
-				SV_CORE_INFO("function AddComponent<Camera> from GameObject: Object has already assigned camera");
+				SV_CORE_INFO("function AssignComponent<Camera> from GameObject: Object has already assigned camera");
 		}
-		template<typename T> inline bool HaveAssignComponent(void);
-		template<> inline bool HaveAssignComponent<Camera>(void)
+		template<> inline void AssignComponent(Animation& animation)
+		{
+			if (m_Animation == UNDEF_PTR)
+			{
+				m_Animation = &animation;
+				m_Animation->AssignObject(*this);
+
+				return;
+			}
+			else
+				SV_CORE_INFO("function AssignComponent<Animation> from GameObject: Object has already assigned animation");
+		}
+		template<typename T> inline bool HaveAssignComponent(void) const;
+		template<> inline bool HaveAssignComponent<Camera>(void) const
 		{
 			return m_Camera == UNDEF_PTR ? false : true;
+		}
+		template<> inline bool HaveAssignComponent<Animation>(void) const
+		{
+			return m_Animation == UNDEF_PTR ? false : true;
 		}
 		template<typename T> inline void UnassignComponent(void);
 		template<> inline void UnassignComponent<Camera>(void)
 		{
 			m_Camera = UNDEF_PTR;
+		}
+		template<> inline void UnassignComponent<Animation>(void)
+		{
+			m_Animation = UNDEF_PTR;
 		}
 		void RemoveComponent(ComponentType componentType);
 
@@ -123,7 +143,7 @@ namespace Strave
 		IComponent*				m_RigidBody;			// Not implemented yet
 		IComponent*				m_Collider;				// Not implemented yet
 		IComponent*				m_ParticleSystem;		// Not implemented yet
-		IComponent*				m_Animation;			// Not implemented yet
+		Animation*				m_Animation;			// Working...
 		IComponent*				m_Audio;				// Not implemented yet
 		CharacterController*	m_CharacterController;  
 		IComponent*				m_AIController;			// Not implemented yet

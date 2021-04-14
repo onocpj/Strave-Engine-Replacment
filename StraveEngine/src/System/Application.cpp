@@ -8,7 +8,8 @@
 #include <StraveEngine/Renderer/Renderer.hpp>
 #include <StraveEngine/Entity/GameObjectContainer.hpp>
 #include <StraveEngine/UI/UserInterfaceContainer.hpp>
-#include <StraveEngine/Component/CameraContainer.hpp>
+#include <StraveEngine/Component/Camera/CameraContainer.hpp>
+#include <StraveEngine/Component/Animation/AnimationContainer.hpp>
 
 
 namespace Strave
@@ -27,6 +28,7 @@ namespace Strave
 		GameObjectContainer::Create();		// Initialize GameObjectContainer
 		UserInterfaceContainer::Create();	// Initialize userInterfaceContainer
 		CameraContainer::Create();			// Initialize CameraContainer
+		AnimationContainer::Create();		// Initialize AnimationContainer
 		Renderer::Create();					// Initialize Renderer
 
 		// Initialize Window
@@ -49,6 +51,7 @@ namespace Strave
 			ExceptionHandler::Pass(GameObjectContainer::Delete());
 			ExceptionHandler::Pass(UserInterfaceContainer::Delete());
 			ExceptionHandler::Pass(CameraContainer::Delete());
+			ExceptionHandler::Pass(AnimationContainer::Delete());
 			ExceptionHandler::Pass(GarbageCollector::SweepMemory());
 			ExceptionHandler::Pass(GarbageCollector::Delete());
 			ExceptionHandler::Pass(svlog::Log::Delete());

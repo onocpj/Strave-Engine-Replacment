@@ -7,7 +7,5 @@ namespace Strave
 {
 	IElement::IElement(std::string name) :
 		Object(name)
-	{
-
-	}
+	{}
 }

@@ -3,6 +3,7 @@
 #include <StraveEngine/Element/ISprite.hpp>
 #include <StraveEngine/Element/Sprite.hpp>
 #include <StraveEngine/Element/RectangleSprite.hpp>
+#include <StraveEngine/Element/Texture.hpp>
 #include <StraveEngine/System/Convert.hpp>
 #include <StraveEngine/Entity/GameObject.hpp>
 #include <StraveEngine/Component/Mesh.hpp>
@@ -70,6 +71,16 @@ namespace Strave
 	{
 		m_Rotation = rotation;
 		Transform::ApplyRotation();
+	}
+
+	const Vector2f Transform::GetSize(void) const
+	{
+		Texture& texture = m_Mesh->GetTexture();
+
+		return Vector2f(
+			texture.getSize().x * m_Scale.x,
+			texture.getSize().y * m_Scale.y
+		);
 	}
 
 	void Transform::ApplyTransforms(void) const

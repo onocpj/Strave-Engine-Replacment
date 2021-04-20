@@ -5,8 +5,8 @@
 #include <StraveEngine/System/Log.hpp>
 #include <StraveEngine/System/Convert.hpp>
 #include <StraveEngine/System/EngineClocks.hpp>
-#include <StraveEngine/System/Array.hpp>
 #include <StraveEngine/System/ExceptionHandler.hpp>
+#include <StraveEngine/Utility/Array.hpp>
 #include <StraveEngine/Entity/GameObject.hpp>
 #include <StraveEngine/Component/Animation/AnimationContainer.hpp>
 #include <StraveEngine/Component/Animation/AnimationFlag.hpp>
@@ -90,16 +90,36 @@ namespace Strave
 		m_AnimationNum = t_CorrectImageCount.y;
 	}
 
+	void Animation::Animate(Uint16 animation)
+	{
+		if (animation <= m_AnimationNum - 1) {
+			if (!this->IsActive()) {
+				if (!AnimationFlag::IsRised(m_AnimationState)) {
+					if (m_Constraints != UNDEF_PTR)
+						Animation::LoadConstraints(m_Constraints[animation]);
+
+					this->SetActiveAnimation(animation);
+					m_AnimationState = AnimationFlag::Rise(*this);
+				}
+			}
+		}
+	}
+
+	void Animation::Stop(void)
+	{
+		if (m_AnimationState != NULL_PTR) {
+			if (m_Constraints != UNDEF_PTR)
+				Animation::LoadConstraints(m_Constraints[ANIM_DEF_ANIM]);
+
+			m_CurrentAnimation = AssignDefaultAnimation();
+			AnimationFlag::Fold(m_AnimationState);
+		}
+	}
+
 	void Animation::LoadConstraints(const Constraints& constraints) 
 	{
 		m_FrameCount.x = constraints.frames;
 		m_FrameSwitchTime = (constraints.animationTime / constraints.frames);
-	}
-
-	void Animation::Update(const GameObject& object) 
-	{
-		if (object.HaveAssignComponent<Animation>())
-			object.GetComponent<Animation>().Update();
 	}
 
 	void Animation::Update(void) 
@@ -128,19 +148,10 @@ namespace Strave
 		m_GameObject->GetComponent<Mesh>().GetSprite<Sprite>().setTextureRect(*m_CurrentFrameRect);
 	}
 
-	void Animation::Animate(Uint16 animation) 
+	void Animation::Update(const GameObject& object)
 	{
-		if (animation <= m_AnimationNum - 1) {
-			if (!this->IsActive()) {
-				if (!AnimationFlag::IsRised(m_AnimationState)) {
-					if (m_Constraints != UNDEF_PTR)
-						Animation::LoadConstraints(m_Constraints[animation]);
-
-					this->SetActiveAnimation(animation);
-					m_AnimationState = AnimationFlag::Rise(*this);
-				}
-			}
-		}
+		if (object.HaveAssignComponent<Animation>())
+			object.GetComponent<Animation>().Update();
 	}
 
 	void Animation::AssignObject(GameObject& object) 
@@ -157,17 +168,6 @@ namespace Strave
 		}
 		else 
 			SV_CORE_INFO("function Animation::AssignTo(GameObject2D&): Object have alaready assigned animation");
-	}
-
-	void Animation::Stop(void) 
-	{
-		if (m_AnimationState != NULL_PTR) {
-			if (m_Constraints != UNDEF_PTR)
-				Animation::LoadConstraints(m_Constraints[ANIM_DEF_ANIM]);
-
-			m_CurrentAnimation = AssignDefaultAnimation();
-			AnimationFlag::Fold(m_AnimationState);
-		}
 	}
 
 	////////////////////////////////////////////////////////////

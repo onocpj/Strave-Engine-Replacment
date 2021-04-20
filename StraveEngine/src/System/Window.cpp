@@ -90,7 +90,7 @@ namespace Strave
 		{
 			window.m_SFGameRenderWindow->clear(sf::Color(0, 255, 0, 0));
 			window.m_SandboxEvents.OnUpdate();	// Call function from sandbox that is executed each frame
-			EngineClocks::Update();
+			EngineClocks::Update();				
 			Renderer::RenderScene();
 			window.m_SFGameRenderWindow->display();
 

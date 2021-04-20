@@ -5,7 +5,7 @@
 #include <StraveEngine/System/Exception.hpp>
 #include <StraveEngine/System/Window.hpp>
 #include <StraveEngine/System/Log.hpp>
-#include <StraveEngine/System/Basics.hpp>
+#include <StraveEngine/Utility/Array.hpp>
 #include <StraveEngine/Component/Mesh.hpp>
 #include <StraveEngine/Element/Sprite.hpp>
 #include <StraveEngine/Element/RectangleSprite.hpp>
@@ -65,14 +65,16 @@ namespace Strave
 		Camera* cameraToUpdate = UNDEF_PTR;
 
 		Uint64 objectContainerSize = GameObjectContainer::GetObjectContainerSize();
-		Uint64 userInterfaceContainerSize = UserInterfaceContainer::GetUserInterfaceContainerSize();
+		// Fix: -1 Should not be there. There is some kind of problem, 
+		// where each time there is allocated one object that should not be there
+		Uint64 userInterfaceContainerSize = UserInterfaceContainer::GetUserInterfaceContainerSize() - 1; 
 
 		Uint64 containerSizes[] = {
 			objectContainerSize,
 			userInterfaceContainerSize
 		};
 
-		Uint64 largerContainerSize = Basics::FindLargest(containerSizes, 2);
+		Uint64 largerContainerSize = Array::FindLargest(containerSizes, 2);
 
 		for (Uint64 key = -1; key != largerContainerSize - 1; key++)
 		{
@@ -89,11 +91,15 @@ namespace Strave
 			}
 			if (key != (userInterfaceContainerSize - 1))
 			{
+				// Optimalize: We dont need to cycle whole map of ui, because some of the ui can be
+				// hided on screen, so we dont need to iterate through these
+
 				// Render user interface into scene
 				userInterface = Renderer::PullUserInterfaceFromContainer((Uint64)key);
 
 				if (userInterface != UNDEF_PTR)
-					Renderer::RenderMesh(userInterface->GetComponent<Mesh>());
+					if (userInterface->IsVisible())
+							Renderer::RenderMesh(userInterface->GetComponent<Mesh>());
 			}
 		}
 

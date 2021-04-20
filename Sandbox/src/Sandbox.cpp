@@ -8,10 +8,14 @@ namespace Sandbox
 	GameObject* Object3;
 
 	Texture* ObjectTexture;
+	Texture* GridTexture;
 	AnimationTexture* ObjectAnimationTexture;
 
 	Animation* ObjectAnimation;
 	Animation* Object2Animation;
+
+	Cell* CellPrefab;
+	Grid* Inventory;
 
 	float rotation = 0.0f;
 	float movForward, movBackward, movLeft, movRight;
@@ -25,6 +29,7 @@ namespace Sandbox
 
 		ObjectTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\texture_pack\\player", "Object texture");
 		ObjectAnimationTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\animation_pack\\player_animation", "Object animation texture");
+		GridTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\texture_pack\\inventory");
 
 		Object->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
 		Object2->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
@@ -48,6 +53,15 @@ namespace Sandbox
 		movBackward = Input::GetAxisDirection(Input::Direction::Down);
 		movLeft = Input::GetAxisDirection(Input::Direction::Left);
 		movRight = Input::GetAxisDirection(Input::Direction::Right);
+
+		CellPrefab = new Cell("Cell Prefab");
+		CellPrefab->GetComponent<Mesh>().ApplyTexture(*GridTexture);
+
+		Inventory = new Grid(*GridTexture, *CellPrefab, Vector2u(4, 4), "Inventory");
+		Inventory->SetGridPosition(Vector2f(100.0f, 100.0f));
+		Inventory->GetComponent<Transform>().SetScale(Vector2f(250.0f, 500.0f));
+
+		CellPrefab->Hide();
 	}
 
 	// Function is called every frame
@@ -76,7 +90,7 @@ namespace Sandbox
 		}
 
 		Object->GetComponent<Animation>().Animate(2);
-		Object2->GetComponent<Animation>().Animate(2);
+		Object2->GetComponent<Animation>().Animate(1);
 	}
 
 	// Function is called upon exit

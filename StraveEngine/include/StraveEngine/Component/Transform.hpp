@@ -23,9 +23,10 @@ namespace Strave
 		void SetScale(Vector2f scale);
 		void SetRotation(float rotation);
 		inline ComponentType GetComponentType(void) const override final { return ComponentType::Transform; }
-		inline const Vector2f& GetPosition(void) const { return m_Position; }
-		inline const Vector2f& GetOrigin(void) const { return m_Origin; };
-		inline const Vector2f& GetScale(void) const { return m_Scale; }
+		inline Vector2f& GetPosition(void) { return m_Position; }
+		inline Vector2f& GetOrigin(void) { return m_Origin; };
+		inline Vector2f& GetScale(void) { return m_Scale; }
+		const Vector2f GetSize(void) const;
 		inline float GetRotation(void) const { return m_Rotation; }
 		Vector2f GetDefaultPosition(void);
 		Vector2f GetDefaultScale(void);

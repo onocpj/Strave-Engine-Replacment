@@ -109,7 +109,6 @@ namespace Strave
 			{
 				m_Animation = &animation;
 				m_Animation->AssignObject(*this);
-
 				return;
 			}
 			else

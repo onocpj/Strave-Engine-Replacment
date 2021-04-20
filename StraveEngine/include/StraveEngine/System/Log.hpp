@@ -6,9 +6,9 @@
 #include <memory>
 
 
-namespace Strave 
+namespace Strave
 {
-	namespace svlog 
+	namespace svlog
 	{
 		class Log abstract final
 		{
@@ -19,13 +19,19 @@ namespace Strave
 				m_ClientLogger = new Logger(clientLoggerName, clientLoggerColors);
 			}
 
-			inline static Logger& GetCoreLogger() { return *m_CoreLogger; }
-			inline static Logger& GetClientLogger() { return *m_ClientLogger; }
+			inline static Logger& GetCoreLogger()
+			{
+				return *m_CoreLogger;
+			}
+			inline static Logger& GetClientLogger()
+			{
+				return *m_ClientLogger;
+			}
 
 
 			inline static Exception Delete(void)
 			{
-				try 
+				try
 				{
 					delete m_CoreLogger;
 					delete m_ClientLogger;
@@ -37,7 +43,7 @@ namespace Strave
 				{
 					return THROW__EXC_LOG_DEL;
 				}
-		
+
 				return NO_EXCEPTION;
 			}
 

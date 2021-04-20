@@ -30,6 +30,7 @@ namespace Strave
 		static const UserInterface* PullUserInterfaceFromContainer(Uint64 key);
 		static const Animation* PullAnimationFromContainer(Uint64 key);
 		static Camera* PullCameraFromContainer(Uint64 key);
+		inline static void Draw(const Mesh& mesh) { RenderMesh(mesh); } // Instead of Mesh class, there should be Image class
 
 	private:
 		Renderer() = default;

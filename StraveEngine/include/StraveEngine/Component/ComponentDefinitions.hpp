@@ -2,6 +2,7 @@
 
 #include <StraveEngine/Component/Camera/Camera.hpp>
 #include <StraveEngine/Component/Animation/Animation.hpp>
+#include <StraveEngine/Component/Animation/Animation.hpp>
 
 
 ////////////////////////////////////////////////////////////

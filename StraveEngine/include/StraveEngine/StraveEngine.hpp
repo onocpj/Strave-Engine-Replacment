@@ -8,4 +8,5 @@
 #include <StraveEngine/Component.hpp>
 #include <StraveEngine/Control.hpp>
 #include <StraveEngine/UI.hpp>
+#include <StraveEngine/Utility.hpp>
 // --------------------------------------	

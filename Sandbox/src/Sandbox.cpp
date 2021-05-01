@@ -23,74 +23,71 @@ namespace Sandbox
 	// Function is called upon start
 	void Game::OnStart(void) const
 	{
+		// Test: Create game objects
 		Object = new GameObject("Object");
 		Object2 = new GameObject("Object2");
 		Object3 = new GameObject("Object3");
 
-		ObjectTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\texture_pack\\player", "Object texture");
-		ObjectAnimationTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\animation_pack\\player_animation", "Object animation texture");
+		// Loading textures
+		ObjectTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\texture_pack\\player");
+		ObjectAnimationTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\animation_pack\\player_animation");
 		GridTexture = Texture::LoadTexture("D:\\Documents\\Strave Pictures\\texture_pack\\inventory");
 
-		Object->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
-		Object2->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
-		Object3->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);
-		Object3->GetComponent<Transform>().SetPosition(Vector2f(50.0f, 50.0f));
+		// Using objects components
+		Object->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);				// Applying texture for object mesh
+		Object2->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);				// Applying texture for object mesh
+		Object3->GetComponent<Mesh>().ApplyTexture(*ObjectTexture);				// Applying texture for object mesh
+		Object3->GetComponent<Transform>().SetPosition(Vector2f(50.0f, 50.0f)); // Applying position for object
 
+		// Creating animation map (animation texture map constraints)
 		Animation::Constraints AnimationConstraints[] = {
-			ANIMATION_CONSTRAINTS,
-			{ 6, 0.20f },
-			{ 6, 0.20f },
+			ANIMATION_CONSTRAINTS,	// animation 1
+			{ 6, 0.20f },			// animation 2
+			{ 6, 0.20f },			// animation 3
 		};
-		ObjectAnimation = new Animation(*ObjectAnimationTexture, 3, AnimationConstraints);
-		Object2Animation = new Animation(*ObjectAnimation);
+		ObjectAnimation = new Animation(*ObjectAnimationTexture, 3, AnimationConstraints);  // Creating animation
+		Object2Animation = new Animation(*ObjectAnimation);									// Copying existing animation
 
-		Object->AddComponent<CharacterController>();
-		Object->AssignComponent(Camera::GetCamera(MAIN_CAMERA));
-		Object->AssignComponent<Animation>(*ObjectAnimation);
-		Object2->AssignComponent<Animation>(*Object2Animation);
+		// Assigning component for objects
+		Object->AddComponent<CharacterController>();				// Assigning character controller for object (player)
+		Object->AssignComponent(Camera::GetCamera(MAIN_CAMERA));	// Assigning main camera to object (player)
+		Object->AssignComponent<Animation>(*ObjectAnimation);		// Assigning created animations for object
+		Object2->AssignComponent<Animation>(*Object2Animation);		// Assigning created animations for object
 
+		// Getting input axis direction values for movement
 		movForward = Input::GetAxisDirection(Input::Direction::Up);
 		movBackward = Input::GetAxisDirection(Input::Direction::Down);
 		movLeft = Input::GetAxisDirection(Input::Direction::Left);
 		movRight = Input::GetAxisDirection(Input::Direction::Right);
 
+		// Creating user interface
 		CellPrefab = new Cell("Cell Prefab");
-		CellPrefab->GetComponent<Mesh>().ApplyTexture(*GridTexture);
+		CellPrefab->GetComponent<Image>().ApplyTexture(*GridTexture);
 
-		Inventory = new Grid(*GridTexture, *CellPrefab, Vector2u(4, 4), "Inventory");
-		Inventory->SetGridPosition(Vector2f(100.0f, 100.0f));
-		Inventory->GetComponent<Transform>().SetScale(Vector2f(250.0f, 500.0f));
-
-		CellPrefab->Hide();
+		Inventory = new Grid(*GridTexture, *CellPrefab, Vector2u(8, 4), "Inventory");
+		Inventory->SetMargins(Vector2f(15.0f, 15.0f));
+		Inventory->SetGridPosition(Vector2f(5.0f, 5.0f));
+		Inventory->SetGridSize(Vector2f(250.0f, 500.0f));
 	}
 
 	// Function is called every frame
 	void Game::OnUpdate(void) const
 	{
+		// Binding movement of player to keys
 		Object->GetComponent<CharacterController>().Move(Input::Axis::Vertical, movForward * EngineClocks::DeltaTime * 2.0f, Keyboard::Key::W);
 		Object->GetComponent<CharacterController>().Move(Input::Axis::Vertical, movBackward * EngineClocks::DeltaTime * 2.0f, Keyboard::Key::S);
 		Object->GetComponent<CharacterController>().Move(Input::Axis::Horizontal, movLeft * EngineClocks::DeltaTime * 2.0f, Keyboard::Key::A);
 		Object->GetComponent<CharacterController>().Move(Input::Axis::Horizontal, movRight * EngineClocks::DeltaTime * 2.0f, Keyboard::Key::D);
 
+		// Testing switching camera on key press between two objects
 		if (Keyboard::IsKeyPressed(Keyboard::Key::V))
-		{
-			if (!Object2->HaveAssignComponent<Camera>())
-			{
-				Object->UnassignComponent<Camera>();
-				Object2->AssignComponent(Camera::GetCamera(MAIN_CAMERA));
-			}
-		}
+			Camera::Switch(Camera::GetCamera(MAIN_CAMERA), *Object, *Object2);
 		else
-		{
-			if (!Object->HaveAssignComponent<Camera>())
-			{
-				Object2->UnassignComponent<Camera>();
-				Object->AssignComponent(Camera::GetCamera(MAIN_CAMERA));
-			}
-		}
+			Camera::Switch(Camera::GetCamera(MAIN_CAMERA), *Object2, *Object);
 
-		Object->GetComponent<Animation>().Animate(2);
-		Object2->GetComponent<Animation>().Animate(1);
+		// Testing object animations
+		Object->GetComponent<Animation>().Animate(2);	// 2 means play second animation from animation map
+		Object2->GetComponent<Animation>().Animate(1);	// 1 means play first animation from animation map
 	}
 
 	// Function is called upon exit

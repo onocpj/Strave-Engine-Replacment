@@ -6,10 +6,22 @@
 
 namespace Strave
 {
-	struct AnimationMap
+	template<Uint64 size> class AnimationMap
 	{
-		Uint16 animation;
-		Animation::Constraints constraints;
+	private:
+		struct Composition
+		{
+			Uint16 animation;
+			Animation::Constraints constraints;
+		};
+
+	public:
+		AnimationMap();
+		AnimationMap(AnimationMap& animationMap) = default;
+		~AnimationMap();
+
+	public:
+		Composition* m_AnimationComposition;
 	};
 }
 

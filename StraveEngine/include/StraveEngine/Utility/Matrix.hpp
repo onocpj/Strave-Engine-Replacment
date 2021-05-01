@@ -11,7 +11,7 @@ namespace Strave
 	struct STRAVE_SYSTEM_API Matrix abstract
 	{
 		static Vector2u IndexToPosition(Uint64 index, Vector2u dimensions);
-		static Uint64 PositionToIndex(Vector2u dimensions);
+		static Uint32 PositionToIndex(Vector2u dimensions);
 		template<typename T> static T* GetColumn(T* matrix, int columnIndex, Vector2u dimensions)
 		{
 			int matrixSize = dimensions.x * dimensions.y;

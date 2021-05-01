@@ -42,3 +42,5 @@
 #define UNDEF_VECTOR4I		{ UNDEF_VECTOR2I, UNDEF_VECTOR2I }		
 
 #define ERROR_TYPE			-1
+#define UINT64_ERROR_TYPE	0xfffffff
+#define UINT16_ERROR_TYPE	0xfffe

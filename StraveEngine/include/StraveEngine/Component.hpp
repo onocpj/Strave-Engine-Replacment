@@ -7,5 +7,6 @@
 #include <StraveEngine/Component/Camera/Camera.hpp>
 #include <StraveEngine/Component/Animation/Animation.hpp>
 #include <StraveEngine/Component/Animation/AnimationMap.hpp>
+#include <StraveEngine/Component/Animation/AnimationMap.cpp>
 #include <StraveEngine/Component/ComponentDefinitions.hpp>
 #include <StraveEngine/Component/Image.hpp>

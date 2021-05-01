@@ -11,6 +11,7 @@ namespace Strave
 	{
 		Transform = 0,
 		Mesh,
+		Image,
 		Camera,
 		RigidBody,
 		Collider,

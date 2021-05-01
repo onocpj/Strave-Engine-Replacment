@@ -12,6 +12,7 @@ namespace Strave
 {
 	struct Exception;
 	class Mesh;
+	class Image;
 	class GameObject;
 	class UserInterface;
 	class GameObjectContainer;
@@ -30,7 +31,7 @@ namespace Strave
 		static const UserInterface* PullUserInterfaceFromContainer(Uint64 key);
 		static const Animation* PullAnimationFromContainer(Uint64 key);
 		static Camera* PullCameraFromContainer(Uint64 key);
-		inline static void Draw(const Mesh& mesh) { RenderMesh(mesh); } // Instead of Mesh class, there should be Image class
+		inline static void Draw(const Image& mesh) { RenderImage(mesh); } // Instead of Mesh class, there should be Image class
 
 	private:
 		Renderer() = default;
@@ -38,6 +39,8 @@ namespace Strave
 		Renderer(const Renderer&) = delete;
 
 		static void RenderMesh(const Mesh& mesh);
+		static void RenderImage(const Image& image);
+		static void UseDefaultView(void);
 
 	private:
 		static Renderer* s_Renderer;

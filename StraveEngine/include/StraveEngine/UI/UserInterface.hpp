@@ -10,10 +10,11 @@
 namespace Strave
 {
 	class Mouse;
-	class Mesh;
+	class Image;
 	class Transform;
 	class Renderer;
 	class Texture;
+	class Renderer;
 
 	enum class UIType
 	{
@@ -29,14 +30,17 @@ namespace Strave
 
 	class STRAVE_UI_API UserInterface abstract : public Object
 	{
+	private:
+		friend Renderer;
+
 	public:
 		UserInterface(std::string name = EMPTY_STR);
 		UserInterface(UserInterface& ui);
-		~UserInterface() = default;
+		virtual ~UserInterface() = default;
 
 		virtual UIType GetType(void) const = 0;
 		template<typename T> inline T& GetComponent(void) const;
-		template<> inline Mesh& GetComponent<Mesh>(void) const { return *m_Mesh; }
+		template<> inline Image& GetComponent<Image>(void) const { return *m_Image; }
 		template<> inline Transform& GetComponent<Transform>(void) const { return *m_Transform; }
 		inline bool IsVisible(void) const { return m_ShowState; }
 		inline virtual void Show(void) { m_ShowState = true; }
@@ -55,7 +59,7 @@ namespace Strave
 
 	protected:
 		Uint64			m_KEY;
-		Mesh*			m_Mesh;
+		Image*			m_Image;
 		Transform*		m_Transform;
 		bool			m_ShowState;
 	};

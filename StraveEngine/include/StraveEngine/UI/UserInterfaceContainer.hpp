@@ -8,11 +8,13 @@ namespace Strave
 {
 	struct Exceptions;
 	class UserInterface;
+	class Grid;
 
 	class UserInterfaceContainer final : public MapContainer<UserInterface>
 	{
 	private:
 		friend UserInterface;
+		friend Grid;
 
 	public:
 		static void Create(void);

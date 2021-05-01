@@ -31,19 +31,22 @@ namespace Strave
 		~Grid() = default;
 
 		inline UIType GetType(void) const override final { return UIType::Grid; };
-
 		inline const Cell* GetCell(Uint32 index) const { return m_Cells.at(index); }
+		const Cell* GetCell(Vector2u cellPosition) const;
 		inline const GameObject* GetObject(const Cell& cell) const;
 		inline const GameObject* GetObject(Uint32 index) const;
 		void SetMargins(Vector2f margins);
 		void SetGridPosition(Vector2f position);
+		void SetGridSize(Vector2f size);
 		void Show(void) override final;
 		void Hide(void) override final;
 		bool MouseDrag(void) override final;
 		void Insert(const GameObject& object);
+		void Insert(const GameObject& object, Uint32 cellIndex);
+		void Insert(const GameObject& object, Vector2u cellPosition);
 		void Erase(const GameObject& object);
-		void Erase(Uint32 index);
-
+		void Erase(Uint32 cellIndex);
+		void Erase(const Vector2u cellPosition);
 
 	private:
 		void Init(void);

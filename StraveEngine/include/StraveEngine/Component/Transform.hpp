@@ -8,13 +8,14 @@
 namespace Strave
 {	
 	class Mesh;
+	class ISprite;
 
 	class STRAVE_COMPONENT_API Transform final : public IComponent
 	{
 	public:
-		Transform(Mesh* mesh);
+		Transform(ISprite* sprite);
 		Transform(Vector2f& position, Vector2f& scale, float rotation, std::string name = EMPTY_STR);
-		Transform(Mesh* mesh, Vector2f& position, Vector2f& scale, float rotation, std::string name = EMPTY_STR);
+		Transform(ISprite* sprite, Vector2f& position, Vector2f& scale, float rotation, std::string name = EMPTY_STR);
 		~Transform() = default;
 		Transform(const Transform&);
 
@@ -26,7 +27,6 @@ namespace Strave
 		inline Vector2f& GetPosition(void) { return m_Position; }
 		inline Vector2f& GetOrigin(void) { return m_Origin; };
 		inline Vector2f& GetScale(void) { return m_Scale; }
-		const Vector2f GetSize(void) const;
 		inline float GetRotation(void) const { return m_Rotation; }
 		Vector2f GetDefaultPosition(void);
 		Vector2f GetDefaultScale(void);
@@ -40,7 +40,7 @@ namespace Strave
 		void ApplyDefaultOrigin() const;
 
 	private:
-		Mesh*		m_Mesh;
+		ISprite*	m_AssignedSprite;
 		Vector2f	m_Position;
 		Vector2f	m_Scale;
 		Vector2f	m_Origin;

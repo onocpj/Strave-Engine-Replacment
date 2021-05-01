@@ -44,7 +44,7 @@ namespace Strave
 		/// \param Body: { frames, animationTime }
 		/// \param
 		/// \param frames - Number of frames in one row (number of animation frames)
-		/// \param animationTime - Time to loop through all columns (in seconds)
+		/// \param animationTime - Time to loop through all frames. Animation length (in seconds)
 		///
 		struct Constraints
 		{
@@ -53,12 +53,11 @@ namespace Strave
 		};
 
 	public:
-		Animation(const Texture& texture, Uint16 animationNum, const Constraints constraints[], std::string name = EMPTY_STR);
+		Animation(Texture& texture, Uint16 animationNum, const Constraints constraints[], std::string name = EMPTY_STR);
 		Animation(Animation& animation);
 		~Animation();
 
-		inline virtual ComponentType GetComponentType(void) const override final { return ComponentType::Animation; }
-
+		inline ComponentType GetComponentType(void) const override final { return ComponentType::Animation; }
 		inline const Uint64& GetKey(void) const { return m_KEY; }
 		inline bool IsActive(Uint16 animation) const { return m_CurrentAnimation == animation ? true : false; }
 		inline bool IsActive(void) const { return m_CurrentAnimation > (Uint16)ANIM_DEF_ANIM ? true : false; }

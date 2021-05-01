@@ -10,7 +10,10 @@ namespace Strave
 	{
 		Texture = 0,
 		Sprite,
-		RectangleSprite
+		RectangleSprite,
+		Circle,				// Not implmented yet
+		Sqare,				// Not implmented yet
+		Triangle			// Not implmented yet
 	};
 
 	class STRAVE_ELEMENT_API IElement abstract : public Object

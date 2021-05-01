@@ -44,12 +44,16 @@ namespace Strave
 		inline const Vector2f& GetPosition(void) const { return m_Transforms->GetPosition(); }
 		inline const float GetRotation(void) const { return m_Transforms->GetRotation(); }
 		inline const Vector2f& GetViewportSize(void) const { return m_ViewportSize; }
-		static Camera& GetCamera(Uint64 key);
+		static Camera& GetCamera(Uint64 camera);
 		void Delete(void) const;
-		static void Delete(Uint64 key);
+		static void Delete(Uint64 camera);
 		inline void Enable(void) { m_Enabled = true; }
 		inline void Disable(void) { m_Enabled = false; }
 		inline void AssignTransforms(Transform& transforms) { m_Transforms = &transforms; }
+		void AssignTo(GameObject& object);
+		static void AssignTo(Camera& camera, GameObject& object);
+		void Switch(GameObject& fromObject, GameObject& toObject);
+		static void Switch(Camera& camera, GameObject& fromObject, GameObject& toObject);
 
 	private:
 		~Camera() = default;

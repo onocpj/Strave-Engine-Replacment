@@ -47,7 +47,7 @@ namespace Strave
 		inline void Show(void) override final;
 		inline void Hide(void) override final;
 
-		inline ObjectHolder* GetHolder(void) const {  return m_ObjectHolder; }
+		inline ObjectHolder* GetObjectHolder(void) const {  return m_ObjectHolder; }
 		inline const GameObject& GetObjectFromHolder(void) const { return *m_ObjectHolder->Peek(); }
 		inline void Insert(const GameObject& object) const { m_ObjectHolder->Hold(object); }
 		inline void Empty(void) const { m_ObjectHolder->Release(); }

@@ -1,15 +1,15 @@
 #pragma once
 
+#include <StraveEngine/Component/Mesh.hpp>
+#include <StraveEngine/Component/Animation/Animation.hpp>
+#include <StraveEngine/Component/IComponent.hpp>
+#include <StraveEngine/Component/Transform.hpp>
+#include <StraveEngine/Component/CharacterController.hpp>
+#include <StraveEngine/Component/Camera/Camera.hpp>
 #include <StraveEngine/System/Export.hpp>
 #include <StraveEngine/System/DataTypes.hpp>
 #include <StraveEngine/System/Log.hpp>
 #include <StraveEngine/Entity/Object.hpp>
-#include <StraveEngine/Component/IComponent.hpp>
-#include <StraveEngine/Component/Transform.hpp>
-#include <StraveEngine/Component/Mesh.hpp>
-#include <StraveEngine/Component/CharacterController.hpp>
-#include <StraveEngine/Component/Camera/Camera.hpp>
-#include <StraveEngine/Component/Animation/Animation.hpp>
 
 
 #define GO_KEY_UNASSIGNED	ERROR_TYPE
@@ -49,7 +49,7 @@ namespace Strave
 		{ 
 			if (m_Transform == UNDEF_PTR)
 			{
-				m_Transform = new Transform(this->m_Mesh);
+				m_Transform = new Transform(&this->m_Mesh->GetSprite());
 				return;
 			}
 			else
@@ -59,7 +59,7 @@ namespace Strave
 		{
 			if (m_Mesh == UNDEF_PTR)
 			{
-				m_Mesh = new Mesh(MeshType::Sprite, this->m_Transform);
+				m_Mesh = new Mesh(this->m_Transform);
 				return;
 			}
 			else
@@ -98,6 +98,7 @@ namespace Strave
 			{
 				m_Camera = &camera;
 				m_Camera->AssignTransforms(*this->m_Transform);
+
 				return;
 			}
 			else
@@ -109,6 +110,7 @@ namespace Strave
 			{
 				m_Animation = &animation;
 				m_Animation->AssignObject(*this);
+
 				return;
 			}
 			else
@@ -142,7 +144,7 @@ namespace Strave
 		IComponent*				m_RigidBody;			// Not implemented yet
 		IComponent*				m_Collider;				// Not implemented yet
 		IComponent*				m_ParticleSystem;		// Not implemented yet
-		Animation*				m_Animation;			// Working...
+		Animation*				m_Animation;			
 		IComponent*				m_Audio;				// Not implemented yet
 		CharacterController*	m_CharacterController;  
 		IComponent*				m_AIController;			// Not implemented yet

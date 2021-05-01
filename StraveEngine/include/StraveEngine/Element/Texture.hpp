@@ -21,8 +21,10 @@ namespace Strave
 		Texture(const Texture&) = default;
 
 		inline ElementType GetElementType(void) const override final { return ElementType::Texture; }
-		static const Texture& GetEmpty(void) { return static_cast<Texture&>(*s_EmptyTexture); }
+		inline static Texture& GetEmpty(void) { return static_cast<Texture&>(*s_EmptyTexture); }
 		static Texture* LoadTexture(const fpath_t filePath, std::string name = EMPTY_STR);
+		inline static bool IsEmpty(const Texture* texture) { return texture == UNDEF_PTR ? true : false; }
+		inline bool IsEmpty(void) const { return this == UNDEF_PTR ? true : false; }
 
 	private:
 		static sf::Texture* s_EmptyTexture;

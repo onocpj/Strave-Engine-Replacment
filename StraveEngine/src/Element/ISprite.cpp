@@ -4,14 +4,12 @@
 namespace Strave
 {
 	ISprite::ISprite() :
-		IElement()
-	{
-
-	}
+		IElement(),
+		ITransformable()
+	{}
 
 	ISprite::ISprite(std::string name) :
-		IElement(name)
-	{
-
-	}
+		IElement(name),
+		ITransformable()
+	{}
 }

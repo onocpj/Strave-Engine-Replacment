@@ -96,9 +96,9 @@ namespace Strave
 		m_View->setSize(Convert::ToVector2(m_ViewportSize));
 	}
 
-	Camera& Camera::GetCamera(Uint64 key)
+	Camera& Camera::GetCamera(Uint64 camera)
 	{
-		return *CameraContainer::s_CameraContainer->GetElement(key);
+		return *CameraContainer::s_CameraContainer->GetElement(camera);
 	}
 
 	void Camera::Delete(void) const
@@ -107,11 +107,41 @@ namespace Strave
 		delete this;
 	}
 
-	void Camera::Delete(Uint64 key)
+	void Camera::Delete(Uint64 camera)
 	{
-		Camera* instance = CameraContainer::s_CameraContainer->GetElement(key);
+		Camera* instance = CameraContainer::s_CameraContainer->GetElement(camera);
 		ExceptionHandler::Handle(CameraContainer::Erase(instance->m_KEY));
 		delete instance;
+	}
+
+	void Camera::AssignTo(GameObject& object)
+	{
+		if (!object.HaveAssignComponent<Camera>())
+			object.AssignComponent<Camera>(*this);
+	}
+
+	void Camera::Switch(GameObject& fromObject, GameObject& toObject)
+	{
+		if (!toObject.HaveAssignComponent<Camera>())
+		{
+			fromObject.UnassignComponent<Camera>();
+			toObject.AssignComponent<Camera>(*this);
+		}
+	}
+
+	void Camera::AssignTo(Camera& camera, GameObject& object)
+	{
+		if (!object.HaveAssignComponent<Camera>())
+			object.AssignComponent<Camera>(camera);
+	}
+
+	void Camera::Switch(Camera& camera, GameObject& fromObject, GameObject& toObject)
+	{
+		if (!toObject.HaveAssignComponent<Camera>())
+		{
+			fromObject.UnassignComponent<Camera>();
+			toObject.AssignComponent<Camera>(camera);
+		}
 	}
 
 	void Camera::Update(void)

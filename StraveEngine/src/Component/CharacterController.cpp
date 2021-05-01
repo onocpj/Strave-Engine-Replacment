@@ -36,17 +36,16 @@ namespace Strave
 		if (mesh != UNDEF_PTR)
 		{
 			Transform* transforms = &m_GameObject->GetComponent<Transform>();
-			MeshType meshType = mesh->GetMeshType();
 
 			if (Keyboard::IsKeyPressed(onKey))
 			{
 				if (axis == Input::Axis::Horizontal)
-					mesh->GetSprite<Sprite>().move(Convert::ToVector2(Vector2f(inputValue, 0.0f)));
+					mesh->GetSprite().sf::Sprite::move(Convert::ToVector2(Vector2f(inputValue, 0.0f)));
 
 				if (axis == Input::Axis::Vertical)
-					mesh->GetSprite<Sprite>().move(Convert::ToVector2(Vector2f(0.0f, inputValue)));
+					mesh->GetSprite().sf::Sprite::move(Convert::ToVector2(Vector2f(0.0f, inputValue)));
 
-				Vector2f position = Convert::ToVector2f(mesh->GetSprite<Sprite>().getPosition());
+				Vector2f position = Convert::ToVector2f(mesh->GetSprite().sf::Sprite::getPosition());
 				transforms->SetPosition(position);
 			}
 
@@ -62,15 +61,14 @@ namespace Strave
 		if (mesh != UNDEF_PTR)
 		{
 			Transform* transforms = &m_GameObject->GetComponent<Transform>();
-			MeshType meshType = mesh->GetMeshType();
 
 			if (axis == Input::Axis::Horizontal)
-				mesh->GetSprite<Sprite>().move(Convert::ToVector2(Vector2f(inputValue, 0.0f)));
+				mesh->GetSprite().sf::Sprite::move(Convert::ToVector2(Vector2f(inputValue, 0.0f)));
 
 			if (axis == Input::Axis::Vertical)
-				mesh->GetSprite<Sprite>().move(Convert::ToVector2(Vector2f(0.0f, inputValue)));
+				mesh->GetSprite().sf::Sprite::move(Convert::ToVector2(Vector2f(0.0f, inputValue)));
 
-			Vector2f position = Convert::ToVector2f(mesh->GetSprite<Sprite>().getPosition());
+			Vector2f position = Convert::ToVector2f(mesh->GetSprite().sf::Sprite::getPosition());
 			transforms->SetPosition(position);
 
 			return;

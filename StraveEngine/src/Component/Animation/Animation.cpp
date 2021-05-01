@@ -20,17 +20,18 @@ namespace Strave
 {
 	Uint16 FindLargestColumnNumber(const Animation::Constraints*& constraints, Uint16 framesNum);
 	Vector2u CorrectImageCount(const Vector2u& imageCount);
+	Texture& GetCorrectTexture(Texture& texture);
 
 	////////////////////////////////////////////////////////////
 	/// Animation
 	////////////////////////////////////////////////////////////
-	Animation::Animation(const Texture& texture, Uint16 animationNum, const Constraints constraints[], std::string name) :
+	Animation::Animation(Texture& texture, Uint16 animationNum, const Constraints constraints[], std::string name) :
 		IComponent(name),
 		m_KEY(ANIM_KEY_UNASSIGNED),
 		m_AnimationState(UNDEF_PTR), 
 		m_Constraints(UNDEF_PTR),
 		m_GameObject(UNDEF_PTR), 
-		m_AnimationTextureGrid(&texture),
+		m_AnimationTextureGrid(&GetCorrectTexture(texture)),
 		m_FrameCount(UNDEF_VECTOR2U),
 		m_CurrentAnimation(ANIM_DEF_ANIM),
 		m_CurrentFrame(UNDEF_INT32),
@@ -145,7 +146,7 @@ namespace Strave
 		}
 
 		m_CurrentFrameRect->left = m_CurrentFrameRect->width * m_CurrentFrame;
-		m_GameObject->GetComponent<Mesh>().GetSprite<Sprite>().setTextureRect(*m_CurrentFrameRect);
+		m_GameObject->GetComponent<Mesh>().GetSprite().setTextureRect(*m_CurrentFrameRect);
 	}
 
 	void Animation::Update(const GameObject& object)
@@ -195,6 +196,14 @@ namespace Strave
 			t_ImageCount.y = 1;
 
 		return t_ImageCount;
+	}
+
+	Texture& GetCorrectTexture(Texture& texture)
+	{
+		if (!Texture::IsEmpty(&texture))
+			return texture;
+
+		return Texture::GetEmpty();
 	}
 }
 

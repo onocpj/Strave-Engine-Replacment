@@ -1,10 +1,10 @@
 #include <StraveEngine/Entity/GameObjectContainer.hpp>
 
+#include <StraveEngine/Entity/GameObject.hpp>
 #include <StraveEngine/System/Exception.hpp>
 #include <StraveEngine/System/Log.hpp>
 #include <StraveEngine/System/DataTypes.hpp>
 #include <StraveEngine/System/MapContainer.cpp>
-#include <StraveEngine/Entity/GameObject.hpp>
 
 
 namespace Strave

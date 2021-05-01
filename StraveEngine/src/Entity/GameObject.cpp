@@ -14,8 +14,8 @@ namespace Strave
 	GameObject::GameObject() :
 		Object(),
 		m_KEY(GO_KEY_UNASSIGNED),
-		m_Transform(new Transform(this->m_Mesh)),
-		m_Mesh(new Mesh(MeshType::Sprite, this->m_Transform)),
+		m_Transform(new Transform(&this->m_Mesh->GetSprite())),
+		m_Mesh(new Mesh(this->m_Transform)),
 		m_Camera(UNDEF_PTR),
 		m_RigidBody(UNDEF_PTR),
 		m_Collider(UNDEF_PTR),
@@ -32,8 +32,8 @@ namespace Strave
 	GameObject::GameObject(std::string name) :
 		Object(name),
 		m_KEY(GO_KEY_UNASSIGNED),
-		m_Transform(new Transform(this->m_Mesh)),
-		m_Mesh(new Mesh(MeshType::Sprite, this->m_Transform)),
+		m_Transform(new Transform(&this->m_Mesh->GetSprite())),
+		m_Mesh(new Mesh(this->m_Transform)),
 		m_Camera(UNDEF_PTR),
 		m_RigidBody(UNDEF_PTR),
 		m_Collider(UNDEF_PTR),
@@ -50,7 +50,7 @@ namespace Strave
 	GameObject::GameObject(const GameObject& object) :
 		Object(object),
 		m_Transform(object.m_Transform),
-		m_Mesh(new Mesh(MeshType::Sprite, this->m_Transform)),
+		m_Mesh(new Mesh(this->m_Transform)),
 		m_Camera(object.m_Camera),
 		m_RigidBody(object.m_RigidBody),
 		m_Collider(object.m_Collider),

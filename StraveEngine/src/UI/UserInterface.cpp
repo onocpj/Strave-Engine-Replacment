@@ -1,36 +1,31 @@
 #include <StraveEngine/UI/UserInterface.hpp>
 
-#include <StraveEngine/System/ExceptionHandler.hpp>
-#include <StraveEngine/System/Exception.hpp>
 #include <StraveEngine/Component/Transform.hpp>
 #include <StraveEngine/Component/Mesh.hpp>
-#include <StraveEngine/UI/UserInterfaceContainer.hpp>
 #include <StraveEngine/Control/Mouse.hpp>
 #include <StraveEngine/Renderer/Renderer.hpp>
+#include <StraveEngine/Component/Image.hpp>
+#include <StraveEngine/Element/RectangleSprite.hpp>
 
 
 namespace Strave
 {
 	UserInterface::UserInterface(std::string name) :
 		Object(name),
-		m_Transform(new Transform(this->m_Mesh)),
-		m_Mesh(new Mesh(MeshType::RectangleSprite, this->m_Transform)),
+		m_Transform(new Transform(&this->m_Image->GetSprite())), 
+		m_Image(new Image(this->m_Transform)),
 		m_ShowState(true)
-	{
-		ExceptionHandler::Handle(UserInterfaceContainer::Insert(*this, this->m_KEY));
-	}
+	{}
 
 	UserInterface::UserInterface(UserInterface& ui) :
 		Object(ui),
-		m_Transform(new Transform(this->m_Mesh)),
-		m_Mesh(new Mesh(MeshType::RectangleSprite, this->m_Transform)),
+		m_Transform(new Transform(&this->m_Image->GetSprite())),
+		m_Image(new Image(this->m_Transform)),
 		m_ShowState(ui.m_ShowState)
 	{
-		ExceptionHandler::Handle(UserInterfaceContainer::Insert(*this, this->m_KEY));
-
 		m_Transform->SetPosition(ui.GetComponent<Transform>().GetPosition());
-		m_Transform->SetScale(ui.GetComponent<Transform>().GetScale());
 		m_Transform->SetRotation(ui.GetComponent<Transform>().GetRotation());
+		m_Image->SetNativeSize(ui.m_Image->GetNativeSize());
 	}
 
 	bool UserInterface::MouseClick(Mouse::Button button) const 
@@ -91,6 +86,6 @@ namespace Strave
 
 	void UserInterface::Draw(void) const
 	{
-		Renderer::Draw(this->GetComponent<Mesh>());
+		Renderer::Draw(this->GetComponent<Image>());
 	}
 }

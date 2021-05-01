@@ -4,8 +4,8 @@
 
 #include <StraveEngine/Component/Mesh.hpp>
 
-#include <StraveEngine/Element/IElement.hpp>
 #include <StraveEngine/Element/Sprite.hpp>
+#include <StraveEngine/Element/IElement.hpp>
 #include <StraveEngine/Element/RectangleSprite.hpp>
 #include <StraveEngine/Element/Texture.hpp>
 #include <StraveEngine/System/Log.hpp>
@@ -14,47 +14,39 @@
 
 namespace Strave
 {
-	MeshType TransformMeshType(const ISprite& element);
-	state_t TextureAssigned(const Texture* texture);
-
-	Mesh::Mesh(MeshType meshType, Transform* transforms) :
+	Mesh::Mesh(Transform* transforms) :
 		IComponent(),
 		m_Transforms(transforms),
-		m_Type(meshType),
 		m_Sprite(new Sprite()),
 		m_Texture(UNDEF_PTR)
 	{}
 
-	Mesh::Mesh(MeshType meshType, Transform* transforms, std::string name) :
+	Mesh::Mesh(Transform* transforms, std::string name) :
 		IComponent(name),
 		m_Transforms(transforms),
-		m_Type(meshType),
 		m_Sprite(new Sprite()),
 		m_Texture(UNDEF_PTR)
 	{}
 
-	Mesh::Mesh(Transform* transforms, ISprite& sprite, std::string name) :
+	Mesh::Mesh(Transform* transforms, Sprite& sprite, std::string name) :
 		IComponent(name),
 		m_Transforms(transforms),
-		m_Type(TransformMeshType(sprite)),
 		m_Sprite(&sprite),
 		m_Texture(UNDEF_PTR)
 	{}
 
-	Mesh::Mesh(MeshType meshType, Transform* transforms, Texture& texture, std::string name) :
+	Mesh::Mesh(Transform* transforms, Texture& texture, std::string name) :
 		IComponent(name),
 		m_Transforms(transforms),
-		m_Type(meshType),
 		m_Sprite(new Sprite()),
 		m_Texture(&texture)
 	{
 		this->ApplyTexture(texture);
 	}
 
-	Mesh::Mesh(Transform* transforms, ISprite& sprite, Texture& texture, std::string name) :
+	Mesh::Mesh(Transform* transforms, Sprite& sprite, Texture& texture, std::string name) :
 		IComponent(name),
 		m_Transforms(transforms),
-		m_Type(TransformMeshType(sprite)),
 		m_Sprite(&sprite),
 		m_Texture(&texture)
 	{
@@ -64,26 +56,20 @@ namespace Strave
 	Mesh::Mesh(const Mesh& mesh) :
 		IComponent(mesh),
 		m_Transforms(mesh.m_Transforms),
-		m_Type(mesh.m_Type),
 		m_Sprite(mesh.m_Sprite),
 		m_Texture(mesh.m_Texture)
-	{}
+	{
+		this->ApplyTexture(*m_Texture);
+	}
 
 	void Mesh::UpdateTexture(const Texture& texture)
 	{
-		switch (m_Type)
-		{
-			case MeshType::Sprite: this->GetSprite<Sprite>().setTexture(texture, true); break;
-			case MeshType::RectangleSprite: this->GetSprite<RectangleSprite>().setTexture(&texture, true); break;
-			default: break;
-		}
+		this->GetCorrectSprite().setTexture(texture, true);
 	}
 
-	void Mesh::SelectMesh(ISprite& sprite)
+	void Mesh::SelectMesh(Sprite& sprite)
 	{
-		m_Type = TransformMeshType(sprite);
 		m_Sprite = &sprite;
-
 		this->ApplyTexture(*m_Texture);
 	}
 
@@ -93,16 +79,8 @@ namespace Strave
 
 		if (m_Texture != UNDEF_PTR)
 		{
-			if (m_Type == MeshType::Sprite)
-			{
-				Sprite* sprite = &Mesh::GetSprite<Sprite>();
-				sprite->setTexture(*m_Texture, true);
-			}
-			else
-			{
-				RectangleSprite* rectSprite = &Mesh::GetSprite<RectangleSprite>();
-				rectSprite->setTexture(m_Texture, true);
-			}
+			Sprite* sprite = &Mesh::GetCorrectSprite();
+			sprite->setTexture(*m_Texture, true);
 
 			// After texture was applied, apply default origin (center of the sprite)
 			if (m_Transforms != UNDEF_PTR)
@@ -112,17 +90,7 @@ namespace Strave
 
 	void Mesh::RemoveTexture(void)
 	{
-		if (TextureAssigned(m_Texture))
+		if (Object::Exists(m_Texture))
 			m_Texture = UNDEF_PTR;
-	}
-
-	MeshType TransformMeshType(const ISprite& element)
-	{
-		return static_cast<MeshType>(element.GetElementType());
-	}
-
-	state_t TextureAssigned(const Texture* texture)
-	{
-		return texture != nullptr ? true : false;
 	}
 }

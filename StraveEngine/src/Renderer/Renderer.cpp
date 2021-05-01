@@ -2,13 +2,14 @@
 
 #include <StraveEngine/Renderer/Renderer.hpp>
 
+#include <StraveEngine/Element/RectangleSprite.hpp>
+#include <StraveEngine/Element/Sprite.hpp>
+#include <StraveEngine/Component/Image.hpp>
 #include <StraveEngine/System/Exception.hpp>
 #include <StraveEngine/System/Window.hpp>
 #include <StraveEngine/System/Log.hpp>
 #include <StraveEngine/Utility/Array.hpp>
 #include <StraveEngine/Component/Mesh.hpp>
-#include <StraveEngine/Element/Sprite.hpp>
-#include <StraveEngine/Element/RectangleSprite.hpp>
 #include <StraveEngine/Entity/GameObjectContainer.hpp>
 #include <StraveEngine/Entity/GameObject.hpp>
 #include <StraveEngine/UI/UserInterface.hpp>
@@ -64,43 +65,31 @@ namespace Strave
 		const UserInterface* userInterface = UNDEF_PTR;
 		Camera* cameraToUpdate = UNDEF_PTR;
 
-		Uint64 objectContainerSize = GameObjectContainer::GetObjectContainerSize();
-		// Fix: -1 Should not be there. There is some kind of problem, 
-		// where each time there is allocated one object that should not be there
-		Uint64 userInterfaceContainerSize = UserInterfaceContainer::GetUserInterfaceContainerSize() - 1; 
-
-		Uint64 containerSizes[] = {
-			objectContainerSize,
-			userInterfaceContainerSize
-		};
-
-		Uint64 largerContainerSize = Array::FindLargest(containerSizes, 2);
-
-		for (Uint64 key = -1; key != largerContainerSize - 1; key++)
+		// Render object into scene
+		for (Uint64 key = -1; key != GameObjectContainer::GetObjectContainerSize() - 1; key++)
 		{
-			if (key != (objectContainerSize - 1))
+			objectToRender = Renderer::PullObjectFromContainer((Uint64)key);
+
+			if (objectToRender != UNDEF_PTR)
 			{
-				// Render objects into scene
-				objectToRender = Renderer::PullObjectFromContainer((Uint64)key);
-
-				if (objectToRender != UNDEF_PTR)
-				{
-					Animation::Update(*objectToRender);
-					Renderer::RenderMesh(objectToRender->GetComponent<Mesh>());
-				}
+				Animation::Update(*objectToRender);
+				Renderer::RenderMesh(objectToRender->GetComponent<Mesh>());
 			}
-			if (key != (userInterfaceContainerSize - 1))
-			{
-				// Optimalize: We dont need to cycle whole map of ui, because some of the ui can be
-				// hided on screen, so we dont need to iterate through these
+		}
 
-				// Render user interface into scene
-				userInterface = Renderer::PullUserInterfaceFromContainer((Uint64)key);
+		// Render user interface
+		UseDefaultView(); 
+		for (Uint64 key = -1; key != UserInterfaceContainer::GetUserInterfaceContainerSize() - 1; key++)
+		{
+			// Optimalize: We dont need to cycle whole map of ui, because some of the ui can be
+			// hiden on screen, so we dont need to iterate through these
 
-				if (userInterface != UNDEF_PTR)
-					if (userInterface->IsVisible())
-							Renderer::RenderMesh(userInterface->GetComponent<Mesh>());
-			}
+			// Render user interface into scene
+			userInterface = Renderer::PullUserInterfaceFromContainer((Uint64)key);
+
+			if (userInterface != UNDEF_PTR)
+				if (userInterface->IsVisible())
+					userInterface->Draw();
 		}
 
 		// Render cameras into scene
@@ -162,15 +151,17 @@ namespace Strave
 
 	void Renderer::RenderMesh(const Mesh& mesh)
 	{
-		MeshType meshType = mesh.GetMeshType();
+		Renderer::GetGameWindow().draw(*const_cast<Sprite*>(&mesh.GetSprite()));
+	}
 
-		if (meshType == MeshType::Sprite) 
-		{
-			Sprite* sprite = &mesh.GetSprite<Sprite>();
-			Renderer::GetGameWindow().draw(*sprite);
-		}
-		else
-			Renderer::GetGameWindow().draw(mesh.GetSprite<RectangleSprite>());
+	void Renderer::RenderImage(const Image& image)
+	{
+		Renderer::GetGameWindow().draw(*const_cast<RectangleSprite*>(&image.GetSprite()));
+	}
+
+	void Renderer::UseDefaultView(void)
+	{
+		Renderer::GetGameWindow().setView(Renderer::GetGameWindow().getDefaultView());
 	}
 
 	////////////////////////////////////////////////////////////

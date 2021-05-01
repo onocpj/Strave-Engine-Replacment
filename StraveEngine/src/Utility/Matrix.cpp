@@ -30,8 +30,27 @@ namespace Strave
 		return indexPosition;
 	}
 
-	Uint64 Matrix::PositionToIndex(Vector2u dimensions)
+	Uint32 Matrix::PositionToIndex(Vector2u dimensions)
 	{
-		return 0;
+		Uint32 index = UINT64_ERROR_TYPE;
+		Uint32 matrixSize = dimensions.x * dimensions.y;
+
+		Uint32 row = 0;
+		Uint32 column = 0;
+
+		for (Uint32 i = 0; index < matrixSize; i++)
+		{
+			column++;
+
+			if ((i + 1) % dimensions.y == 0)
+			{
+				column = 0;
+				row++;
+			}
+		}
+
+		index = row * dimensions.x + column;
+
+		return index;
 	}
 }

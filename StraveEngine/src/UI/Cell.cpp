@@ -6,6 +6,7 @@
 #include <StraveEngine/UI/UserInterface.hpp>
 #include <StraveEngine/Component/Mesh.hpp>
 #include <StraveEngine/Renderer/Renderer.hpp>
+#include <StraveEngine/Component/Image.hpp>
 
 
 namespace Strave
@@ -27,14 +28,14 @@ namespace Strave
 		UserInterface(name),
 		m_ObjectHolder(new ObjectHolder(*this))
 	{
-		this->GetComponent<Mesh>().ApplyTexture(texture);
+		this->GetComponent<Image>().ApplyTexture(texture);
 	}
 
 	Cell::Cell(Cell& cell, std::string name) :
 		UserInterface(cell),
 		m_ObjectHolder(new ObjectHolder(*this))
 	{
-		this->GetComponent<Mesh>().ApplyTexture(cell.GetComponent<Mesh>().GetTexture());
+		this->GetComponent<Image>().ApplyTexture(cell.GetComponent<Image>().GetTexture());
 	}
 
 	Cell::~Cell() 
@@ -44,10 +45,10 @@ namespace Strave
 
 	void Cell::Draw() const 
 	{
-		Renderer::Draw(this->GetComponent<Mesh>());
+		Renderer::Draw(this->GetComponent<Image>());
 
 		if (!this->IsEmpty())
-			Renderer::Draw(m_ObjectHolder->GetComponent<Mesh>());
+			Renderer::Draw(m_ObjectHolder->GetComponent<Image>());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -62,23 +63,23 @@ namespace Strave
 
 	void Cell::ObjectHolder::Init(Cell& cell)
 	{
-		Mesh& holderMesh = this->GetComponent<Mesh>();
+		Image& holderImage = this->GetComponent<Image>();
 		Transform& holderTransforms = this->GetComponent<Transform>();
 
 		Transform& cellTransforms = cell.GetComponent<Transform>();
 		Vector2f& cellPosition = cellTransforms.GetPosition();
-		Vector2f& cellScale = cellTransforms.GetScale();
+		Vector2f cellSize = cell.GetComponent<Image>().GetNativeSize();
 
 		Vector2f holderSize;
 		Vector2f holderPosition;
 
-		holderSize = cellScale * (CELL_DEF_MARGINS / 100.0f);
+		holderSize = cellSize * (CELL_DEF_MARGINS / 100.0f);
 		holderPosition = {
-			cellPosition.x + cellScale.x - holderSize.x,
-			cellPosition.y + cellScale.y - holderSize.y,
+			cellPosition.x + cellSize.x - holderSize.x,
+			cellPosition.y + cellSize.y - holderSize.y,
 		};
 
-		holderMesh.ApplyTexture(const_cast<Texture&>(Texture::GetEmpty()));
+		holderImage.ApplyTexture(const_cast<Texture&>(Texture::GetEmpty()));
 		holderTransforms.SetScale(holderSize);
 		holderTransforms.SetPosition(holderPosition);
 	}
@@ -98,12 +99,12 @@ namespace Strave
 	void Cell::ObjectHolder::Hold(const GameObject& object) 
 	{
 		m_GameObject = &object;
-		this->GetComponent<Mesh>().UpdateTexture(object.GetComponent<Mesh>().GetTexture());
+		this->GetComponent<Image>().UpdateTexture(object.GetComponent<Mesh>().GetTexture());
 	}
 
 	void Cell::ObjectHolder::Release(void)
 	{
 		m_GameObject = UNDEF_PTR;
-		this->GetComponent<Mesh>().UpdateTexture(Texture::GetEmpty());
+		this->GetComponent<Image>().UpdateTexture(Texture::GetEmpty());
 	}
 }

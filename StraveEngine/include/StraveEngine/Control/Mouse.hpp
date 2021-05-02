@@ -3,13 +3,36 @@
 #include <StraveEngine/System/Export.hpp>
 
 
+#define MOUSE_DOUBLE_CLICK_DELAY	0.2f
+
+
+namespace sf
+{
+	class RenderWindow;
+}
 namespace Strave
 {
 	class UserInterface;
 	class GameObject;
+	class Object;
+	class Window;
 
 	class STRAVE_CONTROL_API Mouse abstract final 
 	{
+	private:
+		friend Window;
+
+		struct DoubleClick
+		{
+			static float lapsedTime;
+			static bool active;
+		};
+		struct Click
+		{
+			static Object* clickedObject;
+			static bool active;
+		};
+
 	public:
 		enum class Button
 		{
@@ -25,9 +48,6 @@ namespace Strave
 			Horizontal
 		};
 
-		static bool IsButtonPressed(Mouse::Button button);
-		static bool IsButtonPressed(Mouse::Button button, const UserInterface& ui);
-		static bool IsButtonPressed(Mouse::Button button, const GameObject& object);
 		static bool Click(Mouse::Button button);
 		static bool Click(Mouse::Button button, const UserInterface& ui);
 		static bool Click(Mouse::Button button, const GameObject& object);
@@ -47,5 +67,14 @@ namespace Strave
 		static bool Hover(const GameObject& object);
 		static bool Drag(UserInterface& ui);
 		static bool Drag(GameObject& object);
+
+	protected:
+		static sf::RenderWindow& GetSceneWindow(void);
+		static sf::RenderWindow& GetGameWindow(void);
+
+	private:
+		static bool IsButtonPressed(Mouse::Button button);
+		static bool IsButtonPressed(Mouse::Button button, const UserInterface& ui);
+		static bool IsButtonPressed(Mouse::Button button, const GameObject& object);
 	};
 }

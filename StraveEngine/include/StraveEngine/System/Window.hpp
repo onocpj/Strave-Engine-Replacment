@@ -6,6 +6,7 @@
 #include <StraveEngine/System/UndefinedDataTypes.hpp>
 #include <StraveEngine/System/DataTypes.hpp>
 #include <StraveEngine/Renderer/Renderer.hpp>
+#include <StraveEngine/Control/Mouse.hpp>
 
 #include <functional>
 #include <string>
@@ -61,6 +62,8 @@ namespace Strave
 		~Window();
 		void Init(void);
 
+		friend sf::RenderWindow& Mouse::GetSceneWindow(void);
+		friend sf::RenderWindow& Mouse::GetGameWindow(void);
 		friend sf::RenderWindow& Renderer::GetSceneWindow(void);
 		friend sf::RenderWindow& Renderer::GetGameWindow(void);
 
@@ -80,8 +83,7 @@ namespace Strave
 
 		sf::Event*			m_SFEvent;
 		sf::VideoMode*		m_SFVideoMode;
-		sf::RenderWindow*	m_SFGameRenderWindow;
-		sf::RenderWindow*	m_SFSceneRenderWindow;
+		sf::RenderWindow*	m_RenderWindow;
 	};
 }
 

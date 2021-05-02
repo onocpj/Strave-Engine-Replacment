@@ -73,6 +73,16 @@ namespace Sandbox
 	// Function is called every frame
 	void Game::OnUpdate(void) const
 	{
+		// Testing mouse events
+		if (Mouse::DoubleClick(Mouse::Button::Left, *Object)) 
+			Console::PrintLine("Object double clicked");
+
+		if(Mouse::DoubleClick(Mouse::Button::Right)) 
+			Console::PrintLine("Right mouse button clicked");
+
+		if (Mouse::DoubleClick(Mouse::Button::Left, *Inventory))
+			Inventory->MouseDrag();
+
 		// Binding movement of player to keys
 		Object->GetComponent<CharacterController>().Move(Input::Axis::Vertical, movForward * EngineClocks::DeltaTime * 2.0f, Keyboard::Key::W);
 		Object->GetComponent<CharacterController>().Move(Input::Axis::Vertical, movBackward * EngineClocks::DeltaTime * 2.0f, Keyboard::Key::S);

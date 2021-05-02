@@ -37,6 +37,9 @@ namespace Strave
 		Uint64 size;
 	};
 
+	////////////////////////////////////////////////////////////
+	/// Renderer
+	////////////////////////////////////////////////////////////
 	void Renderer::Create(void)
 	{
 		Renderer::s_Renderer = new Renderer();
@@ -121,12 +124,12 @@ namespace Strave
 
 	sf::RenderWindow& Renderer::GetGameWindow(void)
 	{
-		return *Window::s_GameWindow->m_SFGameRenderWindow;
+		return *Window::s_GameWindow->m_RenderWindow;
 	}
 
 	sf::RenderWindow& Renderer::GetSceneWindow(void)
 	{
-		return *Window::s_GameWindow->m_SFGameRenderWindow;
+		return *Window::s_GameWindow->m_RenderWindow;
 	}
 
 	const GameObject* Renderer::PullObjectFromContainer(Uint64 key)
@@ -165,7 +168,7 @@ namespace Strave
 	}
 
 	////////////////////////////////////////////////////////////
-	/// Additional renderer functions
+	/// Functions
 	////////////////////////////////////////////////////////////
 	SelectedContainer SelectLargerContainer(SelectedContainer* containers, Uint64 conNum)
 	{

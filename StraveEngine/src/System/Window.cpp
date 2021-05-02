@@ -26,8 +26,7 @@ namespace Strave
 		m_SandboxEvents(sandboxEvent),
 		m_SFEvent(UNDEF_PTR),
 		m_SFVideoMode(UNDEF_PTR),
-		m_SFGameRenderWindow(UNDEF_PTR),
-		m_SFSceneRenderWindow(UNDEF_PTR)
+		m_RenderWindow(UNDEF_PTR)
 	{
 		Window::Init();
 	}
@@ -36,20 +35,20 @@ namespace Strave
 	{
 		delete m_SFVideoMode;
 		delete m_SFEvent;
-		delete m_SFGameRenderWindow;
+		delete m_RenderWindow;
 	}
 
 	void Window::Init(void)
 	{
 		m_SFVideoMode = new sf::VideoMode(m_WindowResolution.GetWidth(), m_WindowResolution.GetHeight());
-		m_SFGameRenderWindow = new sf::RenderWindow(*m_SFVideoMode, m_WindowTitle);
+		m_RenderWindow = new sf::RenderWindow(*m_SFVideoMode, m_WindowTitle);
 		m_SFEvent = new sf::Event();
 	}
 
 	void Window::SetFramerateCap(Uint64 cap)
 	{
 		m_WindowFramerate.SetFramerateCap(cap);
-		m_SFGameRenderWindow->setFramerateLimit((unsigned int)cap);
+		m_RenderWindow->setFramerateLimit((unsigned int)cap);
 	}
 
 	Exception Window::Execute(Window& window)
@@ -86,19 +85,19 @@ namespace Strave
 
 		window.m_SandboxEvents.OnStart();	// Call function from sandbox that is executed at start of the application
 
-		while (window.m_SFGameRenderWindow->isOpen())
+		while (window.m_RenderWindow->isOpen())
 		{
-			window.m_SFGameRenderWindow->clear(sf::Color(0, 255, 0, 0));
+			window.m_RenderWindow->clear(sf::Color(0, 255, 0, 0));
 			window.m_SandboxEvents.OnUpdate();	// Call function from sandbox that is executed each frame
 			EngineClocks::Update();				
 			Renderer::RenderScene();
-			window.m_SFGameRenderWindow->display();
+			window.m_RenderWindow->display();
 
-			while (window.m_SFGameRenderWindow->pollEvent(*window.m_SFEvent))
+			while (window.m_RenderWindow->pollEvent(*window.m_SFEvent))
 			{
 				if (window.m_SFEvent->type == sf::Event::Closed)
 				{
-					window.m_SFGameRenderWindow->close();
+					window.m_RenderWindow->close();
 					window.m_SandboxEvents.OnEnd(); // Call function from sandbox that is executed upon end
 					ExceptionHandler::Handle(Scene::Delete());
 

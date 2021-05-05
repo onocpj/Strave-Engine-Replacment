@@ -35,23 +35,23 @@ namespace Strave
 			friend const std::vector<GameObject*>& RenderSection::GetObjectContainer(const Segment& seg) const;
 
 		private:
-      bool						          m_OccupancyState;
-			unsigned int			        m_ContainerSize;
-      SegmentKey_t			        m_Key;
-      Vector2f					        m_Size;
-      Vector2f					        m_Position;
-      Vector2f					        m_CenterPoint;
+			bool						m_OccupancyState;
+			unsigned int				m_ContainerSize;
+			SegmentKey_t				m_Key;
+			Vector2f					m_Size;
+			Vector2f					m_Position;
+			Vector2f					m_CenterPoint;
 			std::vector<GameObject*>* m_GO2DReferenceContainer;
 		};
 		class RenderSection
 		{
 		private:
-			typedef std::vector<GameObject*>					      objl_t;
+			typedef std::vector<GameObject*>					objl_t;
 			typedef std::vector<std::shared_ptr<Segment>>		rndrgrid_t;
-			typedef std::vector<std::shared_ptr<Segment>>*  rndrgrid_ptr;
+			typedef std::vector<std::shared_ptr<Segment>>*		rndrgrid_ptr;
 
-			typedef std::vector<std::shared_ptr<Segment>>::iterator	grid_iter;
-			typedef std::vector<GameObject*>::iterator				      objl_iter;
+			typedef std::vector<std::shared_ptr<Segment>>::iterator		grid_iter;
+			typedef std::vector<GameObject*>::iterator				objl_iter;
 
 			typedef struct ComplexGrid 
 			{
@@ -107,11 +107,11 @@ namespace Strave
 			inline void LoadPreloadedBuffer(void) { m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded; }
 
 		private:
-			float							              m_PreloadRenderOffset;
-			float							              m_PreloadRenderDistance;
-			float							              m_RenderDistance;
-			rndrgrid_ptr					          m_GridReference;
-			RenderingArea_t					        m_RenderingArea;
+			float							m_PreloadRenderOffset;
+			float							m_PreloadRenderDistance;
+			float							m_RenderDistance;
+			rndrgrid_ptr					m_GridReference;
+			RenderingArea_t					m_RenderingArea;
 			std::shared_ptr<ComplexGrid_t>	m_RenderingGrid;
 			std::shared_ptr<RenderBuffer_t>	m_RenderingBuffer;
 		};
@@ -133,12 +133,12 @@ namespace Strave
 		Vector2f GetMapSize(void) const;
 
 	private:
-		Vector2u								              m_NumberOfFields;
-		Vector4f								              m_NormalizedMapPoints;
-		Vector2f								              m_MapSize;
+		Vector2u								m_NumberOfFields;
+		Vector4f								m_NormalizedMapPoints;
+		Vector2f								m_MapSize;
 		std::vector<std::shared_ptr<Segment>>	m_Grid;
-		std::shared_ptr<RenderSection>			  m_RenderSection;
-		std::vector<GameObject*>*				      m_GO2DContainerReference;
+		std::shared_ptr<RenderSection>			m_RenderSection;
+		std::vector<GameObject*>*				m_GO2DContainerReference;
 	};
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <StraveEngine/System/DataTypes.hpp>
+#include <StraveEngine/System/Thread/GameThread.hpp>
 
 
 namespace sf

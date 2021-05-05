@@ -36,7 +36,6 @@ namespace Strave
 		Camera(const Camera&);
 
 		inline virtual ComponentType GetComponentType(void) const override final { return ComponentType::Camera; }
-
 		void SetPosition(Vector2f position);
 		void SetRotation(float rotation);
 		void SetViewportSize(Vector2f size);

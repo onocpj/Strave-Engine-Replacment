@@ -24,6 +24,7 @@
 #define UNDEF_INT32			NULL
 #define UNDEF_INT64			NULL
 #define UNDEF_UINT			NULL
+#define UNDEF_UINT16		NULL
 #define UNDEF_UINT32		NULL
 #define UNDEF_UINT64		NULL
 

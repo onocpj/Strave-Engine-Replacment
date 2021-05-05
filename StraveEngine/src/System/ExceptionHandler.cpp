@@ -9,7 +9,7 @@ namespace Strave
 	ExceptionHandler ExceptionHandler::s_ExceptionCollector;
 	std::shared_ptr<std::queue<Exception>> ExceptionHandler::s_ExceptionHandlerQueue = std::make_shared<std::queue<Exception>>();
 
-		void ExceptionHandler::HandleQueue(void)
+	void ExceptionHandler::HandleQueue(void)
 	{
 		Uint16 exceptionCounter = 0;
 

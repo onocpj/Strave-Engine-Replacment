@@ -49,10 +49,10 @@ namespace Sandbox
 		Object2Animation = new Animation(*ObjectAnimation);									// Copying existing animation
 
 		// Assigning component for objects
-		Object->AddComponent<CharacterController>();				// Assigning character controller for object (player)
-		Object->AssignComponent(Camera::GetCamera(MAIN_CAMERA));	// Assigning main camera to object (player)
-		Object->AssignComponent<Animation>(*ObjectAnimation);		// Assigning created animations for object
-		Object2->AssignComponent<Animation>(*Object2Animation);		// Assigning created animations for object
+		Object->AddComponent<CharacterController>();						// Assigning character controller for object (player)
+		Object->AssignComponent<Camera>(Camera::GetCamera(MAIN_CAMERA));	// Assigning main camera to object (player)
+		Object->AssignComponent<Animation>(*ObjectAnimation);				// Assigning created animations for object
+		Object2->AssignComponent<Animation>(*Object2Animation);				// Assigning created animations for object
 
 		// Getting input axis direction values for movement
 		movForward = Input::GetAxisDirection(Input::Direction::Up);
@@ -80,7 +80,7 @@ namespace Sandbox
 		if(Mouse::DoubleClick(Mouse::Button::Right)) 
 			Console::PrintLine("Right mouse button clicked");
 
-		if (Mouse::DoubleClick(Mouse::Button::Left, *Inventory))
+		if(Mouse::DoubleClick(Mouse::Button::Left, *Inventory))
 			Inventory->MouseDrag();
 
 		// Binding movement of player to keys

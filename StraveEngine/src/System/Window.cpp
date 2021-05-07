@@ -9,6 +9,8 @@
 #include <StraveEngine/Renderer/Renderer.hpp>
 #include <StraveEngine/System/EngineClocks.hpp>
 #include <StraveEngine/Scene/Scene.hpp>
+#include <StraveEngine/System/Thread/ThreadPool.hpp>
+#include <StraveEngine/System/Thread/GameThread.hpp>
 
 
 namespace Strave
@@ -88,9 +90,30 @@ namespace Strave
 		while (window.m_RenderWindow->isOpen())
 		{
 			window.m_RenderWindow->clear(sf::Color(0, 255, 0, 0));
-			window.m_SandboxEvents.OnUpdate();	// Call function from sandbox that is executed each frame
-			EngineClocks::Update();				
-			Renderer::RenderScene();
+
+			DEFINE_TASK_LOGIC;
+			DEFINE_TASK_RENDER;
+
+			// Creating new thread that proceed logic of the sandbox
+			THRP_TASK_START(TASK_LOGIC)
+
+				EngineClocks::Update();
+				window.m_SandboxEvents.OnUpdate();	// Call function from sandbox that is executed each frame
+
+			THRP_TASK_END;
+
+			// Creating new thread that proceed scene rendering
+			THRP_TASK_START(TASK_RENDER)
+
+				Renderer::RenderScene();
+
+				// Lock render thread
+				THRP_TASK_LOCK(TASK_RENDER);	
+			THRP_TASK_END;
+		
+			THRP_TASK_WAIT(TASK_LOGIC);		// Wait till logic is updated
+			THRP_TASK_UNLOCK(TASK_RENDER);	// Then render the scene with updated state and logic
+
 			window.m_RenderWindow->display();
 
 			while (window.m_RenderWindow->pollEvent(*window.m_SFEvent))

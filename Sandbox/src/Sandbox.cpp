@@ -103,6 +103,6 @@ namespace Sandbox
 	// Function is called upon exit
 	void Game::OnEnd(void) const
 	{
-		
+		// no need to free memory, because all game objects memory deallocation is handeled by engine
 	}
 }

@@ -1,14 +1,17 @@
 #pragma once
 
-#include <StraveEngine/System/DataTypes.hpp>
-#include <StraveEngine/System/UndefinedDataTypes.hpp>
-#include <StraveEngine/System/Thread/Task.hpp>
+#include "DataTypes.hpp"
+#include "UndefinedDataTypes.hpp"
+#include "Task.hpp"
+#include "Thread.hpp"
 
 #include <thread>
 #include <atomic>
 #include <mutex>
 #include <queue>
 #include <functional>
+#include <vector>
+#include <memory>
 
 
 #define THRP_TASK					Strave::Uint16
@@ -16,6 +19,7 @@
 #define THRP_TASK_COMPLETED			true
 #define THRP_MAIN_THREAD			1
 #define THRP_UNDEF_THREAD_STATE		ERROR_TYPE
+#define THRP_UNDEF_THREAD_OWNER		ERROR_TYPE
 
 #define THRP_GET_AVAILABLE_THREAD_NUMBER(_total)	_total - THRP_MAIN_THREAD
 
@@ -36,25 +40,39 @@ namespace Strave
 
 		struct EnqueuedTask
 		{
-			Task*			_Task;
-			state_t			Locked;
-			state_t			Completed;
-			Task::Priority	_Priority;
+			EnqueuedTask() = default;
+
+			Task _Task;
+			state_t	Locked;
+			state_t	Completed;
+			Task::Priority _Priority;
+			Int16 ThreadOwner;
+		};
+
+		struct ThreadPack
+		{
+			ThreadPack() = default;
+			ThreadPack(const ThreadPack&) = delete;
+			ThreadPack(Thread* thread, std::mutex* mutex);
+			~ThreadPack();
+
+			Thread* _Thread;
+			std::mutex* TaskStateMutex;
+			std::queue<EnqueuedTask*>* SelectedQueue;
 		};
 
 		struct TaskQueue
 		{
-			std::queue<EnqueuedTask*> MainQueue;
-			std::queue<EnqueuedTask*> BasicQueue;
-			std::queue<EnqueuedTask*> LockedQueue;
+			std::queue<EnqueuedTask*> GetwayQueue;
+			std::queue<EnqueuedTask*> WorkerQueue;
 		};
 
 	public:
-		ThreadPool(ThreadPool& threadPool) = delete;
+		ThreadPool(const ThreadPool& threadPool) = delete;
 
 		static void Create(void);
-		static Exception Delete(void);
-		inline static ThreadPool& Get(void) { return *m_ThreadPool; }
+		static /*Exception*/ int Delete(void);
+		inline static ThreadPool* Get(void) { return m_ThreadPool; }
 		static Int16 GetThreadStatus(const std::thread::id& threadID);
 		static Uint16 Enqueue(Task::NoParam task);
 		static void EnqueueParallel(Task::NoParam task);
@@ -70,40 +88,19 @@ namespace Strave
 		#define THRP_TASK_END })
 
 	private:
-		ThreadPool();
+		ThreadPool() = default;
 		~ThreadPool() = default;
 
 		void StartThreads(void);
-		void UpdateTaskQueue(void);
+		void ProceedTask(Uint16 thread, Thread::ThreadType& threadType); // Runtime function
+		std::queue<EnqueuedTask*>& GetCorrectQueue(Thread::ThreadType& threadType);
+		static std::queue<EnqueuedTask*>& GetCorrectQueue(EnqueuedTask& enqTask);
 
 	private:
-		static ThreadPool*			m_ThreadPool;
+		static ThreadPool*							m_ThreadPool;
 
-		std::vector<Thread*>		m_ThreadContainer;
-		std::mutex					m_Mutex;
-		TaskQueue					m_TaskQueue;
+		std::vector<std::shared_ptr<ThreadPack>>	m_ThreadContainer;
+		std::mutex									m_TaskQueueMutex;
+		TaskQueue									m_TaskQueue;
 	};
-
-	void TestFunction()
-	{
-		THRP_TASK taskA;
-		THRP_TASK taskB;
-
-		THRP_TASK_START(taskA)
-
-			UpdateLogic();
-
-		THRP_TASK_END;
-
-		THRP_TASK_START(taskB)
-
-			RenderScene();
-
-			THRP_TASK_LOCK(taskB);
-		THRP_TASK_END;
-
-		THRP_TASK_WAIT(taskA);
-		THRP_TASK_UNLOCK(taskB);
-	}
 }
-

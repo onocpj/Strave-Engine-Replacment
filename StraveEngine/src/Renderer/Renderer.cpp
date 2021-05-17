@@ -64,6 +64,11 @@ namespace Strave
 
 	void Renderer::RenderScene(void)
 	{
+		// Working but needs to be remaked, we need to render one bash containing all game objects instead of iterating
+		// and drawing each object separatly !!
+		//
+		// iterate through all game objects bitmap and merge all objects bitmap into one bash that will be rendered on screen 
+		
 		const GameObject* objectToRender = UNDEF_PTR;
 		const UserInterface* userInterface = UNDEF_PTR;
 		Camera* cameraToUpdate = UNDEF_PTR;

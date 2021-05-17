@@ -171,11 +171,11 @@ namespace Strave
 			auto threadWorker = std::move(
 				LAMBDAV_START
 
-				Uint16 threadID = index;
-			while (true /* !StraveApplication->GetOnExitState() */) { ProceedTask(threadID); }
+					Uint16 threadID = index;
+					while (true /* !StraveApplication->GetOnExitState() */) { ProceedTask(threadID); }
 
-			LAMBDA_END
-				);
+				LAMBDA_END
+			);
 
 			Thread* thread = new Thread(threadWorker);
 			ThreadPool::Get()->m_ThreadContainer.push_back(std::make_shared<ThreadPack>(thread));

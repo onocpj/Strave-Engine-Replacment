@@ -77,18 +77,18 @@ namespace Strave
 		void AssignObject(GameObject& object);
 
 	private:
-		Uint64				m_KEY;
-		AnimationFlag*		m_AnimationState;
-		Constraints*		m_Constraints;
-		GameObject*			m_GameObject;
-		const Texture*		m_AnimationTextureGrid;
-		sf::IntRect*		m_CurrentFrameRect;
-		Vector2u			m_FrameCount;
-		Uint16				m_CurrentAnimation;
-		Uint32				m_CurrentFrame;
-		Uint32				m_AnimationNum;
-		float				m_ElapsedTime;
-		float				m_FrameSwitchTime;
-		bool				m_UseDefaultAnimation;
+		Uint64		m_KEY;
+		AnimationFlag*	m_AnimationState;
+		Constraints*	m_Constraints;
+		GameObject*	m_GameObject;
+		const Texture*	m_AnimationTextureGrid;
+		sf::IntRect*	m_CurrentFrameRect;
+		Vector2u	m_FrameCount;
+		Uint16		m_CurrentAnimation;
+		Uint32		m_CurrentFrame;
+		Uint32		m_AnimationNum;
+		float		m_ElapsedTime;
+		float		m_FrameSwitchTime;
+		bool		m_UseDefaultAnimation;
 	};
 }

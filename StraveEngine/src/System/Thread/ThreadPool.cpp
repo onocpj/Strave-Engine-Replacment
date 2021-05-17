@@ -127,7 +127,7 @@ namespace Strave
 		return;
 	}
 
-		void ThreadPool::Wait(Int16* thread)
+	void ThreadPool::Wait(Int16* thread)
 	{
 		auto predicate = THRP_PREDICATE(return (thread != nullptr && *thread >= 0));	
 		while (!predicate()) {}

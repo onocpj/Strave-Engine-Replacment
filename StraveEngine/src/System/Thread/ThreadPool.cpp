@@ -127,25 +127,10 @@ namespace Strave
 		return;
 	}
 
-	void ThreadPool::Wait(Int16* thread)
+		void ThreadPool::Wait(Int16* thread)
 	{
-		// auto predicate = [&thread]() -> bool {
-		// 	return (thread != nullptr && *thread >= 0);
-		// };
-		// 
-		// while (!predicate())
-		// {}
-
-		{
-			std::condition_variable threadProceededTask;
-			std::mutex waitThread;
-
-			std::unique_lock<std::mutex> taskProceededLock(waitThread);
-			threadProceededTask.wait(
-				taskProceededLock,
-				THRP_PREDICATE(return (thread != nullptr && *thread >= 0))
-			);
-		}
+		auto predicate = THRP_PREDICATE(return (thread != nullptr && *thread >= 0));	
+		while (!predicate()) {}
 
 		{
 			std::unique_lock<std::mutex> taskStateLock(*(ThreadPool::Get()->m_ThreadContainer[*thread]->TaskHolder->TaskStateMutex));
@@ -157,8 +142,8 @@ namespace Strave
 
 		EnqueuedTask* taskToTerminate = ThreadPool::Get()->m_TerminateTaskMap.GetElement((Uint64)ThreadPool::Get()->m_ThreadContainer[*thread]->TaskHolder->KEY);
 		ThreadPool::Get()->m_TerminateTaskMap.EraseFromContainer((Uint64)ThreadPool::Get()->m_ThreadContainer[*thread]->TaskHolder->KEY);
-
-		delete taskToTerminate;
+		
+		delete taskToTerminate;	
 		taskToTerminate = nullptr;
 
 		return;
@@ -172,7 +157,7 @@ namespace Strave
 				LAMBDAV_START
 
 					Uint16 threadID = index;
-					while (true /* !StraveApplication->GetOnExitState() */) { ProceedTask(threadID); }
+					while (true /* !StraveApplication->GetOnExitState() */) { ProceedTask(threadID); } 
 
 				LAMBDA_END
 			);
@@ -206,7 +191,7 @@ namespace Strave
 				enqTask->KEY = (Uint16)m_TerminateTaskMap.InsertToContainerRecycled(*enqTask);
 			}
 
-			m_ThreadContainer[thread]->CV->notify_one();
+			m_ThreadContainer[thread]->CV->notify_one(); 
 		}
 	}
 

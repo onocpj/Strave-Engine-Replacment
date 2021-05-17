@@ -72,24 +72,21 @@ namespace Strave
 		ThreadPool(const ThreadPool& threadPool) = delete;
 
 		static void Create(void);
-		static Exception Delete(void);
+		static /*Exception*/ int Delete(void);
 		inline static ThreadPool* Get(void) { return m_ThreadPool; }
 		static Int16 GetThreadStatus(const std::thread::id& threadID);
 		static void Mute(Task::NoParam& task);
-
 		static Int16* Enqueue(Task::NoParam task);
 		static void EnqueueParallel(Task::NoParam task);
+		static void Lock(Int16* thread);
+		static void Unlock(Int16* thread);
+		static void Wait(Int16* thread);
+
+		#define THRP_THREAD_LOCK(_thread) ThreadPool::Lock(_thread)
+		#define THRP_THREAD_UNLOCK(_thread) ThreadPool::Unlock(_thread)
+		#define THRP_THREAD_WAIT(_thread) ThreadPool::Wait(_thread)
 		#define THRP_TASK_START(_thread) _thread = ThreadPool::Enqueue([&]() {
 		#define THRP_TASK_END })
-
-		static void Lock(Int16* thread);
-		#define THRP_THREAD_LOCK(_thread) ThreadPool::Lock(_thread)
-
-		static void Unlock(Int16* thread);
-		#define THRP_THREAD_UNLOCK(_thread) ThreadPool::Unlock(_thread)
-
-		static void Wait(Int16* thread);
-		#define THRP_THREAD_WAIT(_thread) ThreadPool::Wait(_thread)
 
 	private:
 		ThreadPool() = default;

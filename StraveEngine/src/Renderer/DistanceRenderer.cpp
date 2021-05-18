@@ -14,10 +14,13 @@ namespace Strave
 	////////////////////////////////////////////////////////////
 	/// DistanceRenderer
 	////////////////////////////////////////////////////////////
-	DistanceRenderer::DistanceRenderer(const RenderingConstraints& constraints, const std::vector<GameObject*>& go2dCon, const Vector4f& normMapPoints)
-		: m_NumberOfFields(RENDERING_GRID_DIM), m_NormalizedMapPoints(normMapPoints),
-		m_MapSize(UNDEF_VECTOR2F), m_Grid(UNDEF_STD_VECTOR),
-		m_RenderSection(UNDEF_SMARTPTR), m_GO2DContainerReference(UNDEF_PTR)
+	DistanceRenderer::DistanceRenderer(const RenderingConstraints& constraints, const std::vector<GameObject*>& go2dCon, const Vector4f& normMapPoints) : 
+		m_NumberOfFields(RENDERING_GRID_DIM), 
+		m_NormalizedMapPoints(normMapPoints),
+		m_MapSize(UNDEF_VECTOR2F), 
+		m_Grid(UNDEF_STD_VECTOR),
+		m_RenderSection(UNDEF_SMARTPTR), 
+		m_GO2DContainerReference(UNDEF_PTR)
 	{
 		Init(constraints, go2dCon);
 	}
@@ -235,10 +238,14 @@ namespace Strave
 	////////////////////////////////////////////////////////////
 	/// Segment
 	////////////////////////////////////////////////////////////
-	DistanceRenderer::Segment::Segment(SegmentKey_t key, const Vector2f& size, const Vector2f& pos, const std::vector<GameObject*>& go2dSegCon)
-		: m_OccupancyState(UNDEF_BOOL), m_ContainerSize(UNDEF_UINT),
-		m_Key(key), m_Size(size), m_Position(pos),
-		m_CenterPoint(UNDEF_VECTOR2F), m_GO2DReferenceContainer(UNDEF_PTR)
+	DistanceRenderer::Segment::Segment(SegmentKey_t key, const Vector2f& size, const Vector2f& pos, const std::vector<GameObject*>& go2dSegCon) : 
+		m_OccupancyState(UNDEF_BOOL),
+		m_ContainerSize(UNDEF_UINT),
+		m_Key(key), 
+		m_Size(size), 
+		m_Position(pos),
+		m_CenterPoint(UNDEF_VECTOR2F), 
+		m_GO2DReferenceContainer(UNDEF_PTR)
 	{
 		Init(go2dSegCon);
 	}
@@ -275,10 +282,14 @@ namespace Strave
 	////////////////////////////////////////////////////////////
 	/// RenderSection
 	////////////////////////////////////////////////////////////
-	DistanceRenderer::RenderSection::RenderSection(const RenderingConstraints& constraints, const std::vector<std::shared_ptr<Segment>>& grid)
-		: m_PreloadRenderOffset(UNDEF_FLOAT), m_PreloadRenderDistance(UNDEF_FLOAT), m_RenderDistance(UNDEF_FLOAT),
-		m_GridReference(UNDEF_SMARTPTR), m_RenderingArea(),
-		m_RenderingGrid(UNDEF_SMARTPTR), m_RenderingBuffer(UNDEF_SMARTPTR)
+	DistanceRenderer::RenderSection::RenderSection(const RenderingConstraints& constraints, const std::vector<std::shared_ptr<Segment>>& grid) : 
+		m_PreloadRenderOffset(UNDEF_FLOAT), 
+		m_PreloadRenderDistance(UNDEF_FLOAT), 
+		m_RenderDistance(UNDEF_FLOAT),
+		m_GridReference(UNDEF_SMARTPTR), 
+		m_RenderingArea(),
+		m_RenderingGrid(UNDEF_SMARTPTR), 
+		m_RenderingBuffer(UNDEF_SMARTPTR)
 	{
 		Init(constraints, grid);
 	}

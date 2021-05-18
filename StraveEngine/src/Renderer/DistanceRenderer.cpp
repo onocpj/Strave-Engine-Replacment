@@ -431,7 +431,7 @@ namespace Strave
 			*m_RenderingGrid->InRange = t_PreloadedInRange;
 			*m_RenderingGrid->NotInRange = t_PreloadedNotInRange;
 
-			m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded; // In game engine, send this line of code to mutex
+			m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded; // In game engine, send this line of code to lock
 
 			/*thread::ThreadPool::Mute([this](){
 				m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded;
@@ -511,7 +511,7 @@ namespace Strave
 			*m_RenderingGrid->InRange = t_PreloadedInRange;
 			*m_RenderingGrid->NotInRange = t_PreloadedNotInRange;
 
-			m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded; // In game engine, send this line of code to mutex
+			m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded; // In game engine, send this line of code to lock
 
 			/*thread::ThreadPool::Mute([this]() {
 				m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded;

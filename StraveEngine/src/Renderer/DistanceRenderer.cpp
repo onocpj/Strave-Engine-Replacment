@@ -433,7 +433,7 @@ namespace Strave
 
 			m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded; // In game engine, send this line of code to mutex
 
-			/*thread::ThreadPool::SendToMutex([this](){
+			/*thread::ThreadPool::Mute([this](){
 				m_RenderingBuffer->Loaded = m_RenderingBuffer->Preloaded;
 			});*/
 

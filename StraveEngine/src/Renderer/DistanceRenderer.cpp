@@ -331,7 +331,7 @@ namespace Strave
 
 	state_t DistanceRenderer::RenderSection::Update(void) 
 	{
-		// OPTIMIZE SOMEHOW.. WORKING, BUT LIKE HORSESHIT !!!
+		// OPTIMIZE SOMEHOW.. 
 		state_t(DistanceRenderer::RenderSection:: * selectedUpdate)(void) = UNDEF_PTR;
 		state_t updateCalled = UNDEF_BOOL;
 

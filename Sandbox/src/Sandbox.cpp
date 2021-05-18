@@ -75,10 +75,10 @@ namespace Sandbox
 	{
 		// Testing mouse events
 		if (Mouse::DoubleClick(Mouse::Button::Left, *Object)) 
-			Console::PrintLine("Object double clicked");
+			Console::PrintLine("Object left mouse double clicked");
 
 		if(Mouse::DoubleClick(Mouse::Button::Right)) 
-			Console::PrintLine("Right mouse button clicked");
+			Console::PrintLine("Right right mouse double clicked");
 
 		if(Mouse::DoubleClick(Mouse::Button::Left, *Inventory))
 			Inventory->MouseDrag();

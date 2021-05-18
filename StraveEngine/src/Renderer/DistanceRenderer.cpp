@@ -116,7 +116,7 @@ namespace Strave
 		std::unique_ptr<std::vector<GameObject*>> t_UnassignedObjectContainer = std::make_unique<std::vector<GameObject*>>(*m_GO2DContainerReference);
 
 		Uint64		t_Index;
-		int			t_SegmentInitKey;
+		int		t_SegmentInitKey;
 		Vector2f	t_SegmentSize;
 		Vector2f	t_SegmentPosition;
 
@@ -175,7 +175,7 @@ namespace Strave
 	std::vector<GameObject*>* DistanceRenderer::GetObjectsInSegmentRange(const Vector2f& segPos, const Vector2f& segSize, std::vector<GameObject*>& unassignedObjects)
 	{
 		std::vector<GameObject*>* t_GO2DSectionContainer = new std::vector<GameObject*>();
-		std::queue<unsigned int>	t_AssignedObjectIndex;
+		std::queue<unsigned int> t_AssignedObjectIndex;
 		unsigned int t_Index = UNDEF_UINT;
 
 		Vector2f t_ObjectPosition;
@@ -206,7 +206,6 @@ namespace Strave
 			}
 
 			t_Index++;
-
 		}
 
 		// Erase all objects from the container that has been assigned
@@ -217,8 +216,8 @@ namespace Strave
 
 	Vector2f DistanceRenderer::GetMapSize(void) const 
 	{
-		Vector4f	t_NormalizedMapSize = m_NormalizedMapPoints;
-		Vector2f	t_MapSize = UNDEF_VECTOR2F;
+		Vector4f t_NormalizedMapSize = m_NormalizedMapPoints;
+		Vector2f t_MapSize = UNDEF_VECTOR2F;
 
 		if (t_NormalizedMapSize.max.x < 0.0f) {
 			t_NormalizedMapSize.max.x *= (-1.0f);

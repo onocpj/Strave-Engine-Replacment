@@ -1,9 +1,17 @@
 #include <StraveEngine/Renderer/DistanceRenderer.hpp>
 
+#include <StraveEngine/Renderer/DistanceRendererConstraints.hpp>
 #include <StraveEngine/System/DataTypes.hpp>
 #include <StraveEngine/System/UndefinedDataTypes.hpp>
-#include <StraveEngine/Entity/GameObject.hpp>
 #include <StraveEngine/System/Log.hpp>
+#include <StraveEngine/System/Timer.hpp>
+#include <StraveEngine/Entity/GameObject.hpp>
+#include <StraveEngine/Component/Mesh.hpp>
+#include <StraveEngine/Component/Transform.hpp>
+#include <StraveEngine/Component/Animation/Animation.hpp>
+#include <StraveEngine/Utility/Array.hpp>
+#include <StraveEngine/Utility/Math.hpp>
+#include <StraveEngine/Utility/Point.hpp>
 
 #include <iostream>
 #include <queue>
@@ -14,7 +22,7 @@ namespace Strave
 	////////////////////////////////////////////////////////////
 	/// DistanceRenderer
 	////////////////////////////////////////////////////////////
-	DistanceRenderer::DistanceRenderer(const RenderingConstraints& constraints, const std::vector<GameObject*>& go2dCon, const Vector4f& normMapPoints) : 
+	DistanceRenderer::DistanceRenderer(const DistanceRendererConstraints& constraints, const std::vector<GameObject*>& go2dCon, const Vector4f& normMapPoints) : 
 		m_NumberOfFields(RENDERING_GRID_DIM), 
 		m_NormalizedMapPoints(normMapPoints),
 		m_MapSize(UNDEF_VECTOR2F), 
@@ -25,9 +33,7 @@ namespace Strave
 		Init(constraints, go2dCon);
 	}
 
-	DistanceRenderer::~DistanceRenderer() {}
-
-	void DistanceRenderer::Init(const RenderingConstraints& constraints, const std::vector<GameObject*>& go2dCon)
+	void DistanceRenderer::Init(const DistanceRendererConstraints& constraints, const std::vector<GameObject*>& go2dCon)
 	{
 		m_MapSize = GetMapSize();
 		m_GO2DContainerReference = const_cast<std::vector<GameObject*>*>(&go2dCon);
@@ -90,7 +96,7 @@ namespace Strave
 		for (std::vector<GameObject*>::iterator iter = t_GO2DContainer.begin(), end = t_GO2DContainer.end(); iter != end; iter++) {
 
 			// each iteration get
-			t_CurrentNormalizedPoints.max = (*iter)->GetSpritePosition();
+			t_CurrentNormalizedPoints.max = (*iter)->GetComponent<Transform>().GetPosition();
 			t_CurrentNormalizedPoints.min = t_CurrentNormalizedPoints.max;
 
 			// find highest normalized points
@@ -118,10 +124,10 @@ namespace Strave
 	{
 		std::unique_ptr<std::vector<GameObject*>> t_UnassignedObjectContainer = std::make_unique<std::vector<GameObject*>>(*m_GO2DContainerReference);
 
-		Uint64		t_Index;
-		int		t_SegmentInitKey;
-		Vector2f	t_SegmentSize;
-		Vector2f	t_SegmentPosition;
+		Uint64 t_Index;
+		int t_SegmentInitKey;
+		Vector2f t_SegmentSize;
+		Vector2f t_SegmentPosition;
 
 		t_Index = UNDEF_UINT64;
 		t_SegmentInitKey = INIT_RENDER_SECTION_KEY;
@@ -144,14 +150,14 @@ namespace Strave
 					// insert new section to container
 					m_Grid.push_back(std::make_shared<Segment>(
 						t_SegmentInitKey, t_SegmentSize, t_SegmentPosition, *GetObjectsInSegmentRange(t_SegmentPosition, t_SegmentSize, *t_UnassignedObjectContainer)
-						));
+					));
 
 					t_SegmentPosition.x += t_SegmentSize.x;	// update section x position
 					t_SegmentInitKey++;						// update section key
 
 					if (m_Grid.at((unsigned int)t_Index)->GetContainerSize() > 0) {
 						// Sorts objects that are assigned to this segment by its level
-						RenderLevel::SortObjectsByLevel(m_RenderSection->GetObjectContainer(*(m_Grid.at((unsigned int)t_Index))));
+						// RenderLevel::SortObjectsByLevel(m_RenderSection->GetObjectContainer(*(m_Grid.at((unsigned int)t_Index))));
 					}
 
 					t_Index++;
@@ -170,7 +176,7 @@ namespace Strave
 
 			if (m_Grid.at(0)->GetContainerSize() > 0) {
 				// Sorts objects that are assigned to this segment by its level
-				RenderLevel::SortObjectsByLevel(m_RenderSection->GetObjectContainer(*(m_Grid.at(0))));
+				// RenderLevel::SortObjectsByLevel(m_RenderSection->GetObjectContainer(*(m_Grid.at(0))));
 			}
 		}
 	}
@@ -193,7 +199,7 @@ namespace Strave
 		};
 
 		for (std::vector<GameObject*>::iterator iter = unassignedObjects.begin(), end = unassignedObjects.end(); iter != end; ++iter) {
-			t_ObjectPosition = (*iter)->GetSpritePosition();
+			t_ObjectPosition = (*iter)->GetComponent<Transform>().GetPosition();
 
 			// check if objects position is higher than minimal position of section
 			if (t_ObjectPosition.x >= t_StartPosition.x &&
@@ -209,10 +215,11 @@ namespace Strave
 			}
 
 			t_Index++;
+
 		}
 
 		// Erase all objects from the container that has been assigned
-		Additive::ADDContainer::EraseElementsFromVector<GameObject*>(unassignedObjects, t_AssignedObjectIndex);
+		Array::EraseElementsFromVector<GameObject*>(unassignedObjects, t_AssignedObjectIndex);
 
 		return t_GO2DSectionContainer; // return created container
 	}
@@ -239,7 +246,7 @@ namespace Strave
 	/// Segment
 	////////////////////////////////////////////////////////////
 	DistanceRenderer::Segment::Segment(SegmentKey_t key, const Vector2f& size, const Vector2f& pos, const std::vector<GameObject*>& go2dSegCon) : 
-		m_OccupancyState(UNDEF_BOOL),
+		m_OccupancyState(UNDEF_BOOL), 
 		m_ContainerSize(UNDEF_UINT),
 		m_Key(key), 
 		m_Size(size), 
@@ -249,8 +256,6 @@ namespace Strave
 	{
 		Init(go2dSegCon);
 	}
-
-	DistanceRenderer::Segment::~Segment() {}
 
 	void DistanceRenderer::Segment::Init(const std::vector<GameObject*>& go2dSegCon)
 	{
@@ -266,7 +271,7 @@ namespace Strave
 			end = const_cast<std::vector<GameObject*>*>(m_GO2DReferenceContainer)->end(); iter != end; iter++) {
 
 			// std::cout << "Object name: " << (*iter)->GetName() << std::endl;
-			std::cout << "Object position [x, y]: [" << (*iter)->GetSpritePosition().x << ", " << (*iter)->GetSpritePosition().y << "]" << std::endl;
+			std::cout << "Object position [x, y]: [" << (*iter)->GetComponent<Transform>().GetPosition().x << ", " << (*iter)->GetComponent<Transform>().GetPosition().y << "]" << std::endl;
 			std::cout << std::endl;
 		}
 	}
@@ -282,7 +287,7 @@ namespace Strave
 	////////////////////////////////////////////////////////////
 	/// RenderSection
 	////////////////////////////////////////////////////////////
-	DistanceRenderer::RenderSection::RenderSection(const RenderingConstraints& constraints, const std::vector<std::shared_ptr<Segment>>& grid) : 
+	DistanceRenderer::RenderSection::RenderSection(const DistanceRendererConstraints& constraints, const std::vector<std::shared_ptr<Segment>>& grid) : 
 		m_PreloadRenderOffset(UNDEF_FLOAT), 
 		m_PreloadRenderDistance(UNDEF_FLOAT), 
 		m_RenderDistance(UNDEF_FLOAT),
@@ -294,13 +299,11 @@ namespace Strave
 		Init(constraints, grid);
 	}
 
-	DistanceRenderer::RenderSection::~RenderSection() {}
-
-	void DistanceRenderer::RenderSection::Init(const RenderingConstraints& constraints, const std::vector<std::shared_ptr<Segment>>& grid) 
+	void DistanceRenderer::RenderSection::Init(const DistanceRendererConstraints& constraints, const std::vector<std::shared_ptr<Segment>>& grid)
 	{
 		m_GridReference = const_cast<std::vector<std::shared_ptr<Segment>>*>(&grid);
-		m_RenderingGrid = std::make_shared<DistanceRenderer::RenderSection::ComplexGrid_t>();
-		m_RenderingBuffer = std::make_shared<RenderBuffer_t>();
+		m_RenderingGrid = std::make_shared<DistanceRenderer::RenderSection::Grid>();
+		m_RenderingBuffer = std::make_shared<RenderBuffer>();
 
 		m_PreloadRenderDistance = VerifyRadius(constraints.GetPreloadedRadius());
 		m_PreloadRenderOffset = GetPreloadRenderOffset();
@@ -316,42 +319,40 @@ namespace Strave
 
 	void DistanceRenderer::RenderSection::Render(Renderer& renderer) 
 	{
-		for (objl_iter object = m_RenderingBuffer->Loaded->begin(), end = m_RenderingBuffer->Loaded->end(); object != end; ++object)
+		typedef std::vector<GameObject*>::iterator objIter;
+		for (objIter object = m_RenderingBuffer->Loaded->begin(), end = m_RenderingBuffer->Loaded->end(); object != end; ++object)
 		{
-			if (Shapes::fPoint::IsInRange<float>(
-				Shapes::fPoint::DistanceBetweenPoints<float>(m_RenderingArea.RenderArea.GetPostion(), (*object)->GetSpritePosition()),
+			if (Math::IsInRange<float>(
+				Point::DistanceBetweenPoints<float>(m_RenderingArea.RenderArea.GetPostion(), (*object)->GetComponent<Transform>().GetPosition()),
 				m_RenderDistance
 				))
 			{
-				Animation::Update(**object);
-				renderer.Draw(*((*object)->GetModel<sf::Sprite>()));
+				// Animation::Update(**object);
+				// renderer.Draw(*((*object)->GetModel<sf::Sprite>()));
 			}
 		}
 	}
 
 	state_t DistanceRenderer::RenderSection::Update(void) 
 	{
-		// OPTIMIZE SOMEHOW.. 
+		// OPTIMIZE SOMEHOW.. WORKING, BUT LIKE HORSESHIT !!!
 		state_t(DistanceRenderer::RenderSection:: * selectedUpdate)(void) = UNDEF_PTR;
 		state_t updateCalled = UNDEF_BOOL;
 
-		if ((*m_RenderingGrid->InRange).size() < (*m_RenderingGrid->NotInRange).size()) {
+		if ((*m_RenderingGrid->InRange).size() < (*m_RenderingGrid->NotInRange).size())
 			selectedUpdate = &DistanceRenderer::RenderSection::OptimizedUpdate;
-
-		}
-		else {
+		else
 			selectedUpdate = &DistanceRenderer::RenderSection::RawUpdate;
-		}
 
-		updateCalled = (this->*selectedUpdate)();
+		updateCalled = (this->*selectedUpdate)(); // Call selected update method
 
 		// Sorts objects that are assigned to this segment by its level
 		// Level means y axis of objects. This needs to be done to eliminate 
 		// object hovering over each other
 
 		if (m_RenderingBuffer->Loaded->size() > 0) {
-			//Timer timer("function: DistanceRenderer::Update");
-			RenderLevel::SortObjectsByLevel(*m_RenderingBuffer->Loaded);
+			// Timer timer("function: DistanceRenderer::Update");
+			// RenderLevel::SortObjectsByLevel(*m_RenderingBuffer->Loaded);
 		}
 
 		return updateCalled;
@@ -359,7 +360,7 @@ namespace Strave
 
 	state_t DistanceRenderer::RenderSection::OptimizedUpdate(void) 
 	{
-		// Instad of running two independant loops for complex grid container "m_RenderingGrid" and updating
+		// Instead of running two independant loops for complex grid container "m_RenderingGrid" and updating
 		// its elements "InRange" and "NotInRange", algorithm is running one loop, that updates both elements each cycle.
 		// This should help to reduce number of loops that needs to be done to preload elements
 		//
@@ -367,7 +368,7 @@ namespace Strave
 
 		Vector2f t_InnerCirclePosition = m_RenderingArea.RenderArea.GetPostion();
 
-		if (Shapes::Circle::InternalCircleBoundingTest(
+		if (Math::InternalCircleBoundingTest(
 			t_InnerCirclePosition, m_RenderingArea.PreloadArea.GetPostion(),
 			m_RenderDistance, m_PreloadRenderDistance))
 		{
@@ -378,8 +379,8 @@ namespace Strave
 			size_t t_InRangeContainerSize = m_RenderingGrid->InRange->size();
 			size_t t_NotInRangeContainerSize = m_RenderingGrid->NotInRange->size();
 
-			rndrgrid_t t_PreloadedInRange = *m_RenderingGrid->InRange;
-			rndrgrid_t t_PreloadedNotInRange = *m_RenderingGrid->NotInRange;
+			RNDRGRID t_PreloadedInRange = *m_RenderingGrid->InRange;
+			RNDRGRID t_PreloadedNotInRange = *m_RenderingGrid->NotInRange;
 
 			m_RenderingArea.PreloadArea.SetPosition(m_RenderingArea.RenderArea.GetPostion());
 			m_RenderingBuffer->Preloaded->clear();
@@ -388,8 +389,8 @@ namespace Strave
 				// check if segments those were assigned to "preload rendering range conntainer", are still in the preload rendering range
 				if (index < t_InRangeContainerSize) {
 					// if assigned segment is no longer in preload rendering range
-					if (!Shapes::fPoint::IsInRange<float>(
-						Shapes::fPoint::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->InRange->at(index)->GetCenterPoint()),
+					if (!Math::IsInRange<float>(
+						Point::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->InRange->at(index)->GetCenterPoint()),
 						m_PreloadRenderDistance + m_PreloadRenderOffset
 						))
 					{
@@ -409,8 +410,8 @@ namespace Strave
 				}
 
 				// chceck if segments, those were not assigned yet to "preload rendering range conntainer", are in the preload rendering range
-				if (Shapes::fPoint::IsInRange<float>(
-					Shapes::fPoint::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->NotInRange->at(index)->GetCenterPoint()),
+				if (Math::IsInRange<float>(
+					Point::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->NotInRange->at(index)->GetCenterPoint()),
 					m_PreloadRenderDistance + m_PreloadRenderOffset
 					))
 				{
@@ -447,7 +448,7 @@ namespace Strave
 	{
 		Vector2f t_InnerCirclePosition = m_RenderingArea.RenderArea.GetPostion();
 
-		if (Shapes::Circle::InternalCircleBoundingTest(
+		if (Math::InternalCircleBoundingTest(
 			t_InnerCirclePosition, m_RenderingArea.PreloadArea.GetPostion(),
 			m_RenderDistance, m_PreloadRenderDistance))
 		{
@@ -457,8 +458,8 @@ namespace Strave
 			size_t t_InRangeContainerSize = m_RenderingGrid->InRange->size();
 			size_t t_NotInRangeContainerSize = m_RenderingGrid->NotInRange->size();
 
-			rndrgrid_t t_PreloadedInRange = *m_RenderingGrid->InRange;
-			rndrgrid_t t_PreloadedNotInRange = *m_RenderingGrid->NotInRange;
+			RNDRGRID t_PreloadedInRange = *m_RenderingGrid->InRange;
+			RNDRGRID t_PreloadedNotInRange = *m_RenderingGrid->NotInRange;
 
 			m_RenderingArea.PreloadArea.SetPosition(m_RenderingArea.RenderArea.GetPostion());
 			m_RenderingBuffer->Preloaded->clear();
@@ -467,8 +468,8 @@ namespace Strave
 				// check if segments those were assigned to "preload rendering range conntainer", are still in the preload rendering range
 				if (index < t_InRangeContainerSize) {
 					// if assigned segment is no longer in preload rendering range
-					if (!Shapes::fPoint::IsInRange<float>(
-						Shapes::fPoint::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->InRange->at(index)->GetCenterPoint()),
+					if (!Math::IsInRange<float>(
+						Point::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->InRange->at(index)->GetCenterPoint()),
 						m_PreloadRenderDistance + m_PreloadRenderOffset
 						))
 					{
@@ -489,8 +490,8 @@ namespace Strave
 			}
 			for (unsigned int index = 0; index < t_NotInRangeContainerSize; index++) {
 				// chceck if segments, those were not assigned yet to "preload rendering range conntainer", are in the preload rendering range
-				if (Shapes::fPoint::IsInRange<float>(
-					Shapes::fPoint::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->NotInRange->at(index)->GetCenterPoint()),
+				if (Math::IsInRange<float>(
+					Point::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), m_RenderingGrid->NotInRange->at(index)->GetCenterPoint()),
 					m_PreloadRenderDistance + m_PreloadRenderOffset
 					))
 				{
@@ -527,14 +528,15 @@ namespace Strave
 	{
 		if (m_RenderingGrid != UNDEF_SMARTPTR) {
 
-			for (grid_iter segment = m_GridReference->begin(), end = m_GridReference->end(); segment != end; ++segment) {
+			typedef std::vector<std::shared_ptr<Segment>>::iterator	gridIter;
+			for (gridIter segment = m_GridReference->begin(), end = m_GridReference->end(); segment != end; ++segment) {
 
 				// check if segment is occupied
 				if ((*segment)->IsOccupied()) {
 
 					// check if segment is in rendering range
-					if (Shapes::fPoint::IsInRange<float>(
-						Shapes::fPoint::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), (*segment)->GetCenterPoint()),
+					if (Math::IsInRange<float>(
+						Point::DistanceBetweenPoints<float>(m_RenderingArea.PreloadArea.GetPostion(), (*segment)->GetCenterPoint()),
 						m_PreloadRenderDistance + m_PreloadRenderOffset
 						))
 					{
@@ -549,7 +551,7 @@ namespace Strave
 
 					}
 					else { // if segment is not in renderign range
-					 // insert this segment to  not in range container
+						// insert this segment to  not in range container
 						m_RenderingGrid->NotInRange->push_back(*segment);
 					}
 
@@ -567,8 +569,8 @@ namespace Strave
 
 		if (m_RenderingBuffer->Loaded->size() > 0) {
 			// Sorts objects that are assigned to this segment by its level
-			Timer timer("function: RenderLevel::SortObjectsByLevel(*m_RenderingBuffer->Loaded) in DistanceRenderer::RenderSection::PreloadRenderingGrid");
-			RenderLevel::SortObjectsByLevel(*m_RenderingBuffer->Loaded);
+			// Timer timer("SortObjectsByLevel in DistanceRenderer::RenderSection::PreloadRenderingGrid");
+			// RenderLevel::SortObjectsByLevel(*m_RenderingBuffer->Loaded);
 		}
 	}
 

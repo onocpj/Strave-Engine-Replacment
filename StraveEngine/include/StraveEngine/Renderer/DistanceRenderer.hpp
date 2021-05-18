@@ -75,10 +75,10 @@ namespace Strave
 			inline const float GetRenderDistance(void) const { return m_RenderDistance; };
 			inline const std::vector<GameObject*>& GetObjectContainer(const Segment& seg) const { return *seg.m_GO2DReferenceContainer; }
 
-			void Render(Renderer& renderer);	// critical function (runtime function)	
-			state_t Update(void);				// critical function (runtime function)	
-			state_t OptimizedUpdate(void);		// critical function (runtime function)
-			state_t RawUpdate(void);			// critical function (runtime function)
+			void Render(Renderer& renderer);	// runtime function
+			state_t Update(void);			// runtime function
+			state_t OptimizedUpdate(void);		// runtime function
+			state_t RawUpdate(void);		// runtime function
 			inline void UpdatePointPosition(const Vector2f& pointPosition) { m_RenderingArea.RenderArea.SetPosition(pointPosition); }
 
 		private:
